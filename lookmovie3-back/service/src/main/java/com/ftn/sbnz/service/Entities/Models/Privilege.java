@@ -1,4 +1,4 @@
-package com.ftn.sbnz.service.Models;
+package com.ftn.sbnz.service.Entities.Models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;

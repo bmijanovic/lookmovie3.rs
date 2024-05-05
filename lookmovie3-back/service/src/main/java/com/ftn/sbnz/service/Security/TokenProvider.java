@@ -5,7 +5,7 @@ import com.ftn.sbnz.service.Exceptions.InvalidAccessTokenException;
 import com.ftn.sbnz.service.Exceptions.InvalidRecoveryTokenException;
 import com.ftn.sbnz.service.Exceptions.InvalidTokenTypeException;
 import com.ftn.sbnz.service.Exceptions.InvalidVerificationTokenException;
-import com.ftn.sbnz.service.Models.User;
+import com.ftn.sbnz.service.Entities.Models.User;
 import com.ftn.sbnz.service.Config.AppProperties;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.Authentication;

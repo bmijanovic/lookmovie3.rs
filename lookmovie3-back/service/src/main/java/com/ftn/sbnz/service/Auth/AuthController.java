@@ -1,7 +1,7 @@
 package com.ftn.sbnz.service.Auth;
 
 
-import com.ftn.sbnz.service.Models.User;
+import com.ftn.sbnz.service.Entities.Models.User;
 import com.ftn.sbnz.service.Auth.DTOs.LoginRequest;
 import com.ftn.sbnz.service.Auth.DTOs.TokenResponse;
 import jakarta.servlet.http.Cookie;

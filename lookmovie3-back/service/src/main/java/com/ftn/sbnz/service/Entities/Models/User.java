@@ -1,4 +1,4 @@
-package com.ftn.sbnz.service.Models;
+package com.ftn.sbnz.service.Entities.Models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
@@ -48,6 +48,43 @@ public class User implements UserDetails{
 			joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
 			inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
 	private List<Role> roles;
+
+	private List<FilmGenre> likedGenres;
+
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "user_liked_films",
+			joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+			inverseJoinColumns = @JoinColumn(name = "film_id", referencedColumnName = "id"))
+	private List<Film> likedFilms;
+
+
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "user_watched_films",
+			joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+			inverseJoinColumns = @JoinColumn(name = "film_id", referencedColumnName = "id"))
+	private List<Film> watchedFilms;
+
+
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "user_liked_directors",
+			joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+			inverseJoinColumns = @JoinColumn(name = "director_id", referencedColumnName = "id"))
+	private List<Director> likedDirectors;
+
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "user_liked_actors",
+			joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+			inverseJoinColumns = @JoinColumn(name = "actor_id", referencedColumnName = "id"))
+	private List<Actor> likedActors;
+
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "user_wishlist",
+			joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+			inverseJoinColumns = @JoinColumn(name = "film_id", referencedColumnName = "id"))
+	private List<Film> wishlist;
+
+
+
 
 
 	@JsonIgnore
