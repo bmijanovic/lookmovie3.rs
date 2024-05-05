@@ -1,0 +1,25 @@
+package rules.forward;
+
+
+import com.ftn.sbnz.service.Entities.Events.FilmRating;
+import com.ftn.sbnz.service.Entities.Models.User;
+
+global User updatedUser;
+
+rule "hello FilmRating"
+when
+    $filmRating : FilmRating()
+then
+    System.out.println("FilmRating inserted");
+end
+
+rule "5 star rating"
+when
+    $filmRating : FilmRating(rating == 5, $user : user, $film : film)
+then
+    System.out.println("5 star rating for film " + $film.getName() + " by user " + $user.getUsername());
+    modify($user) {
+        getLikedFilms().add($film);
+    }
+    updatedUser = $user;
+end

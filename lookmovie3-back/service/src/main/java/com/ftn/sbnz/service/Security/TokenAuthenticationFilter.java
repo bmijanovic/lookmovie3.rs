@@ -1,6 +1,8 @@
 package com.ftn.sbnz.service.Security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ftn.sbnz.service.Entities.Models.Role;
+import com.ftn.sbnz.service.Entities.Models.User;
 import com.ftn.sbnz.service.Exceptions.InvalidAccessTokenException;
 import com.ftn.sbnz.service.Exceptions.InvalidTokenTypeException;
 import com.ftn.sbnz.service.Exceptions.ResponseError;
@@ -15,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -22,7 +26,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.UUID;
+import java.util.*;
 
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
@@ -35,7 +39,8 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-		if (request.getRequestURI().equals("/api/auth/login")) {
+		System.out.println(request.getRequestURI());
+		if (request.getRequestURI().equals("/api/auth/login") || request.getRequestURI().contains("swagger") || request.getRequestURI().contains("/api-doc")) {
 			filterChain.doFilter(request, response);
 			return;
 		}
@@ -57,12 +62,20 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 			UUID userId = tokenProvider.getUserIdFromToken(token);
 
 			UserDetails userDetails = customUserDetailsService.loadUserById(userId);
+			User user = (User) userDetails;
+			List<GrantedAuthority> authorities = new ArrayList<>();
+			for(Role role : user.getRoles()){
+				System.out.println(role.getName());
+	        	authorities.add(new SimpleGrantedAuthority(role.getName().split("_")[1].toUpperCase()));
+			}
+
 
 			if (userDetails == null) {
 				sendResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "Invalid authorization.");
 				return;
 			}
-			UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+//			UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+			UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
 			authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
 			SecurityContextHolder.getContext().setAuthentication(authentication);
