@@ -4,8 +4,11 @@ package rules.forward;
 import com.ftn.sbnz.service.Entities.Events.FilmRating;
 import com.ftn.sbnz.service.Entities.Models.User;
 import com.ftn.sbnz.service.Entities.Models.Film;
+import com.ftn.sbnz.service.Entities.Models.FilmGenre;
 
 global User updatedUser;
+global Film recommendedFilm;
+global Film likedFilm;
 
 rule "hello FilmRating"
 when
@@ -23,6 +26,7 @@ then
         getLikedFilms().add($film);
     }
     updatedUser = $user;
+    likedFilm = $film;
 end
 
 rule "film added to liked films"
@@ -35,4 +39,16 @@ then
         getLikedGenres().add($film.getGenre());
     }
     updatedUser = $user;
+end
+
+
+rule "genre added to liked genres"
+when
+    $user : User(id == updatedUser.getId(), $likedGenres : likedGenres)
+    $genre : FilmGenre() from $likedGenres
+    $film : Film(genre == $genre,  id != likedFilm.getId())
+then
+    System.out.println("Genre " + $genre + " added to liked genres by user " + $user.getUsername());
+    System.out.println("Recommended mmmmmmmmm: " + $film.getName());
+    recommendedFilm = $film;
 end

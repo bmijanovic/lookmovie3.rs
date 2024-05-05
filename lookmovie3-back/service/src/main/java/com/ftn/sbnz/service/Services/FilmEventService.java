@@ -44,13 +44,23 @@ public class FilmEventService {
         //TODO: add to kie session
         KieSession kieSession = kieContainer.newKieSession("ksession");
         kieSession.setGlobal("updatedUser", user); // Initialize the global variable
+        kieSession.setGlobal("recommendedFilm", film);
+        kieSession.setGlobal("likedFilm", film);
         kieSession.insert(user);
         kieSession.insert(film);
         kieSession.insert(filmRating);
-        kieSession.fireAllRules();
+        int fired = kieSession.fireAllRules();
+        System.out.println("Fired " + fired + " rules");
         User updatedUser = (User) kieSession.getGlobal("updatedUser"); // Retrieve the updated object
         user.update(updatedUser);
         userRepository.save(user);
+
+
+        Film recommendedFilm = (Film) kieSession.getGlobal("recommendedFilm");
+        if (recommendedFilm != null) {
+            System.out.println("Recommended film: " + recommendedFilm.getName());
+        }
+
 
 
     }

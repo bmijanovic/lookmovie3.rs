@@ -32,10 +32,10 @@ public class Film {
     @Column(nullable = false)
     private Integer year;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Actor mainActor;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Director director;
 
     @Column(nullable = false)
