@@ -49,7 +49,8 @@ public class User implements UserDetails{
 			inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
 	private List<Role> roles;
 
-	private List<FilmGenre> likedGenres;
+	@Column(name = "liked_genres")
+	private List<FilmGenre> likedGenres = new ArrayList<>();
 
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "user_liked_films",
