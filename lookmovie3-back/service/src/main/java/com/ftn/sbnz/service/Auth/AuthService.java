@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import com.ftn.sbnz.service.Auth.DTOs.LoginRequest;
-import com.ftn.sbnz.service.Models.User;
+import com.ftn.sbnz.service.Entities.Models.User;
 import com.ftn.sbnz.service.Auth.DTOs.TokenResponse;
 import com.ftn.sbnz.service.Repositories.RoleRepository;
 import com.ftn.sbnz.service.Repositories.UserRepository;

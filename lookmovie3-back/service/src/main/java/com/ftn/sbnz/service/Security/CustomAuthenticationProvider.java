@@ -1,7 +1,7 @@
 package com.ftn.sbnz.service.Security;
 
 import com.ftn.sbnz.service.Exceptions.InvalidLogin;
-import com.ftn.sbnz.service.Models.User;
+import com.ftn.sbnz.service.Entities.Models.User;
 import com.ftn.sbnz.service.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.TaskScheduler;

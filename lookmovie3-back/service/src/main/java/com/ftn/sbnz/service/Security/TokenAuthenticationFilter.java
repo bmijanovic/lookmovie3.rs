@@ -33,11 +33,6 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 	private CustomUserDetailsService customUserDetailsService;
 
 
-	private String[] ignoredUrls = {
-			"/api/auth/login",
-	};
-
-
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 		if (request.getRequestURI().equals("/api/auth/login")) {

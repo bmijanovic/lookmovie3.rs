@@ -1,6 +1,6 @@
 package com.ftn.sbnz.service.Repositories;
 
-import com.ftn.sbnz.service.Models.User;
+import com.ftn.sbnz.service.Entities.Models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
