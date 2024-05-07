@@ -38,18 +38,6 @@ public class ServiceApplication  {
 
 	public static void main(String[] args) {
 		ApplicationContext ctx = SpringApplication.run(ServiceApplication.class, args);
-		KieSession kieSession = ctx.getBean(KieSession.class);
-		//get all films
-		FilmRepository filmRepository = ctx.getBean(FilmRepository.class);
-		for(Film f : filmRepository.findAll()){
-			kieSession.insert(f);
-		}
-
-		//get all users
-		UserRepository userRepository = ctx.getBean(UserRepository.class);
-		for(User u : userRepository.findAll()){
-			kieSession.insert(u);
-		}
 	}
 
 	@Bean
@@ -63,7 +51,6 @@ public class ServiceApplication  {
 
 	}
 
-
 	@Bean
 	public KieContainer kieContainer() {
 		KieServices ks = KieServices.Factory.get();
@@ -73,11 +60,6 @@ public class ServiceApplication  {
 		kScanner.start(1000);
 		kieContainer = kContainer;
 		return kContainer;
-	}
-
-	@Bean
-	public KieSession kieSession() {
-		return kieContainer.newKieSession("ksession");
 	}
 	
 	/*

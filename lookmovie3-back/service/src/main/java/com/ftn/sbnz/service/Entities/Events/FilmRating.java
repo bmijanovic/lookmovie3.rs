@@ -36,4 +36,17 @@ public class FilmRating {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
+
+    private Boolean isDone = false;
+
+    @Override
+    public String toString() {
+        return "FilmRating{" +
+                "id=" + id +
+                ", rating=" + rating +
+                ", film=" + film +
+                ", timestamp=" + timestamp +
+                ", user=" + user +
+                '}';
+    }
 }

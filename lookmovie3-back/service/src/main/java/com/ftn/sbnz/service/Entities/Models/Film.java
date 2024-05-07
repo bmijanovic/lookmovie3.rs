@@ -14,6 +14,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Getter
 @Setter
+@ToString
 @Table(name = "FILM")
 public class Film {
     @Id
@@ -42,5 +43,21 @@ public class Film {
     private String description;
 
     private List<Awards> awards;
+
+    @Override
+    public String toString() {
+        return "Film{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", genre=" + genre +
+                ", duration=" + duration +
+                ", year=" + year +
+                ", mainActor=" + mainActor +
+                ", director=" + director +
+                ", description='" + description + '\'' +
+                ", awards=" + awards +
+                '}';
+    }
+
 
 }
