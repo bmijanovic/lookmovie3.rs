@@ -60,9 +60,12 @@ public class FilmEventService {
         }
 
         int fired = kieSession.fireAllRules();
+        //sleep for 5 seconds
         System.out.println("Fired " + fired + " rules");
 
         User updatedUser = (User) kieSession.getGlobal("updatedUser");
+        System.out.println(updatedUser);
+
         user.update(updatedUser);
         userRepository.save(user);
 
@@ -70,6 +73,9 @@ public class FilmEventService {
         Film recommendedFilm = (Film) kieSession.getGlobal("recommendedFilm");
         if (recommendedFilm != null) {
             System.out.println("Recommended film: " + recommendedFilm.getName());
+        }
+        else {
+            System.out.println("No recommended film found.");
         }
 
 

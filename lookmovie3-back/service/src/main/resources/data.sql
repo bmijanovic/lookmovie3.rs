@@ -1,6 +1,6 @@
-INSERT INTO USERS(ID, EMAIL, NAME, PASSWORD, EMAIL_VERIFIED, LOGIN_ATTEMPTS, DELETED, LIKED_GENRES) VALUES
-    ('e3661c31-d1a4-47ab-94b6-1c6500dccf25', 'ognjen@gmail.com', 'Ognjen Radovanovic', '$2y$10$uaQTp4iF5tJoC.R4kCzWOuWB0zNveArf/oKXDvnSs81Z563fPAmZ6', true, 0, false, '{}'::smallint[]),
-    ('e3661c31-d1a4-47ab-94b6-1c6500dccf24', 'bojan@gmail.com', 'Bojan Mijanovic', '$2y$10$C836IyKmo1L08tOzYm8r9.CCW6CjnClul764C1E9DP9aqnO8LOl5G', true, 0, false, '{}'::smallint[]);
+INSERT INTO USERS(ID, EMAIL, NAME, PASSWORD, EMAIL_VERIFIED, LOGIN_ATTEMPTS, DELETED, LIKED_GENRES,GOT_RECOMMENDATION) VALUES
+    ('e3661c31-d1a4-47ab-94b6-1c6500dccf25', 'ognjen@gmail.com', 'Ognjen Radovanovic', '$2y$10$uaQTp4iF5tJoC.R4kCzWOuWB0zNveArf/oKXDvnSs81Z563fPAmZ6', true, 0, false, '{}'::smallint[],false),
+    ('e3661c31-d1a4-47ab-94b6-1c6500dccf24', 'bojan@gmail.com', 'Bojan Mijanovic', '$2y$10$C836IyKmo1L08tOzYm8r9.CCW6CjnClul764C1E9DP9aqnO8LOl5G', true, 0, false, '{}'::smallint[],false);
 
 
 
