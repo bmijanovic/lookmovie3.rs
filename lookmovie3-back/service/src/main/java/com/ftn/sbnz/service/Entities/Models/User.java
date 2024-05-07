@@ -35,7 +35,9 @@ public class User implements UserDetails{
 	@Column(unique = true, nullable = false)
 	private String email;
 
+	@Column
 	private Boolean gotRecommendation = Boolean.FALSE;
+
 	private Integer loginAttempts = 0;
 
 	private String password;
@@ -140,7 +142,7 @@ public class User implements UserDetails{
 	public String toString() {
 		return "User [id=" + id + ", name=" + name + ", email=" + email + ", loginAttempts=" + loginAttempts
 				+ ", password=" + password + ", deleted=" + deleted + ", emailVerified=" + emailVerified + ", roles="
-				+ roles +"RECOMMENDATION: "+gotRecommendation+ "]";
+				+ roles + ", recommendation: " + gotRecommendation + "]";
 	}
 
 	public User update(User user) {

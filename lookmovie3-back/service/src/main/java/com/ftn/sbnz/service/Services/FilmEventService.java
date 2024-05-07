@@ -6,13 +6,15 @@ import com.ftn.sbnz.service.Entities.Models.User;
 import com.ftn.sbnz.service.Repositories.FilmRatingRepository;
 import com.ftn.sbnz.service.Repositories.FilmRepository;
 import com.ftn.sbnz.service.Repositories.UserRepository;
+import org.drools.core.common.DefaultFactHandle;
 import org.kie.api.KieServices;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.rule.FactHandle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import org.kie.api.runtime.rule.QueryResults;
+import org.kie.api.runtime.rule.QueryResultsRow;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
@@ -37,7 +39,7 @@ public class FilmEventService {
     @Autowired
     private KieSession kieSession;
 
-    public void rateFilm(User u, UUID filmId, Double rating) {
+    public Film rateFilm(User u, UUID filmId, Double rating) {
         Film film = filmRepository.findById(filmId).orElseThrow(() -> new IllegalArgumentException("Film not found"));
         User user = userRepository.findById(u.getId()).orElseThrow(() -> new IllegalArgumentException("User not found"));
         FilmRating filmRating = new FilmRating();
@@ -49,36 +51,29 @@ public class FilmEventService {
         filmRatingRepository.save(filmRating);
 
         kieSession.setGlobal("likedFilm", film);
-        kieSession.setGlobal("updatedUser", user);
         kieSession.setGlobal("userId", user.getId());
         kieSession.insert(filmRating);
-//        kieSession.insert(user);
-
-        List<FactHandle> factHandles = new ArrayList<>(kieSession.getFactHandles());
-        for (FactHandle factHandle : factHandles) {
-            System.out.println(kieSession.getObject(factHandle));
-        }
 
         int fired = kieSession.fireAllRules();
-        //sleep for 5 seconds
         System.out.println("Fired " + fired + " rules");
 
-        User updatedUser = (User) kieSession.getGlobal("updatedUser");
-        System.out.println(updatedUser);
+        QueryResults results = kieSession.getQueryResults("getUserById", user.getId());
+        for (QueryResultsRow row : results) {
+            user = (User) row.get("$user");
+        }
+        System.out.println(user);
 
-        user.update(updatedUser);
+        user.update(user);
         userRepository.save(user);
 
-
-        Film recommendedFilm = (Film) kieSession.getGlobal("recommendedFilm");
-        if (recommendedFilm != null) {
+        Film recommendedFilm = null;
+        QueryResults results2 = kieSession.getQueryResults("getLastUserRecommendation", user.getId());
+        for (QueryResultsRow row : results2) {
+            recommendedFilm = (Film) row.get("$film");
             System.out.println("Recommended film: " + recommendedFilm.getName());
         }
-        else {
-            System.out.println("No recommended film found.");
-        }
 
 
-
+        return recommendedFilm;
     }
 }
