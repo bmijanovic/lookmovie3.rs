@@ -1,0 +1,83 @@
+package rules.forward;
+dialect  "mvel"
+
+import com.ftn.sbnz.service.Entities.Events.FilmReview;
+import com.ftn.sbnz.service.Entities.Models.User;
+import com.ftn.sbnz.service.Entities.Models.Film;
+import com.ftn.sbnz.service.Entities.Models.Actor;
+
+global UUID userId;
+global Film likedFilm;
+
+declare Recommendation
+    @role(event)
+end
+
+declare Recommendation
+    film : Film
+    userId : UUID
+end
+
+
+rule "hello FilmReview"
+no-loop
+agenda-group "review"
+when
+    $filmReview : FilmReview(isDone == false)
+then
+    System.out.println("FilmReview inserted");
+end
+
+rule "positive review"
+no-loop
+agenda-group "review"
+when
+    $filmReview : FilmReview($film : film, isPositive == true, isDone == false)
+    $user : User(id == userId)
+then
+    System.out.println("positive review for film " + $film.getName() + " by user " + $user.getUsername());
+    likedFilm = $film;
+    modify($user) {
+        getLikedFilms().add($film);
+    }
+    modify($user){
+        setGotRecommendation(false);
+    }
+    modify($filmReview) {
+        setIsDone(true);
+    }
+end
+
+
+rule "film added to liked films for actor"
+no-loop
+agenda-group "review"
+when
+    $user : User(id == userId, $likedFilms : likedFilms, gotRecommendation == false)
+    eval($likedFilms.size() > 0)
+    $film : Film($actor: mainActor) from $likedFilms.get($likedFilms.size() - 1)
+then
+    System.out.println("    Film " + $film.getName() + " " + $film.getId() + " added to liked films by user " + $user.getUsername());
+    System.out.println("    Film " + likedFilm.getName() + " " + likedFilm.getId() + " IS LIKED FILM");
+    modify($user) {
+        getLikedActors().add($actor);
+    }
+end
+
+
+rule "actor added to liked actors"
+no-loop
+agenda-group "review"
+when
+    $user : User(id == userId , $likedActors : likedActors, gotRecommendation == false)
+    eval($likedActors.size() > 0)
+    $actor : Actor() from $likedActors.get($likedActors.size() - 1)
+    $film : Film(mainActor.getId() == $actor.getId(), id != likedFilm.getId())
+then
+    System.out.println("        Actor " + $actor.getName() + " added to liked actors by user " + $user.getUsername());
+    System.out.println("        Recommended mmmmmmmmm: " + $film.getName());
+    modify($user) {
+        setGotRecommendation(true);
+    }
+    insert(new Recommendation($film, userId));
+end

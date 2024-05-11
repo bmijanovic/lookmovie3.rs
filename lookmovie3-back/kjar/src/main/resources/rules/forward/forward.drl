@@ -30,6 +30,7 @@ end
 
 rule "5 star rating"
 no-loop
+agenda-group "rating"
 when
     $filmRating : FilmRating(rating == 5, $film : film, isDone == false)
     $user : User(id == userId)
@@ -49,13 +50,13 @@ end
 
 rule "film added to liked films"
 no-loop
+agenda-group "rating"
 when
     $user : User(id == userId, $likedFilms : likedFilms, gotRecommendation == false)
     eval($likedFilms.size() > 0)
     $film : Film() from $likedFilms.get($likedFilms.size() - 1)
 then
     System.out.println("Film " + $film.getName() + " " + $film.getId() + " added to liked films by user " + $user.getUsername());
-    System.out.println("Film " + likedFilm.getName() + " " + likedFilm.getId() + " IS LIKED FILM");
     modify($user) {
         getLikedGenres().add($film.getGenre());
     }
@@ -64,6 +65,7 @@ end
 
 rule "genre added to liked genres"
 no-loop
+agenda-group "rating"
 when
     $user : User(id == userId , $likedGenres : likedGenres, gotRecommendation == false)
     eval($likedGenres.size() > 0)
