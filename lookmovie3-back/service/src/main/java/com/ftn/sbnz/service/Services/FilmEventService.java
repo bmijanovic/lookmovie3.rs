@@ -72,8 +72,9 @@ public class FilmEventService {
             recommendedFilm = (Film) row.get("$film");
             System.out.println("Recommended film: " + recommendedFilm.getName());
         }
+        Film filmFromRepo = filmRepository.findById(recommendedFilm.getId()).orElseThrow(() -> new IllegalArgumentException("Film not found"));
 
 
-        return recommendedFilm;
+        return filmFromRepo;
     }
 }

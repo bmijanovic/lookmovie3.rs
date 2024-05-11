@@ -1,5 +1,6 @@
 package com.ftn.sbnz.service.Entities.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,6 +23,7 @@ public class Actor {
     private String Surname;
 
     @OneToMany(mappedBy = "mainActor", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Film> mainActorFilms;
 
     @Override
