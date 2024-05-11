@@ -1,5 +1,6 @@
 package com.ftn.sbnz.service.Entities.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,6 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Getter
 @Setter
+@ToString
 @Table(name = "DIRECTOR")
 public class Director {
     @Id
@@ -21,6 +23,15 @@ public class Director {
     private String Surname;
 
     @OneToMany(mappedBy = "director", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Film> directedFilms;
 
+    @Override
+    public String toString() {
+        return "Director{" +
+                "id=" + id +
+                ", Name='" + Name + '\'' +
+                ", Surname='" + Surname + '\'' +
+                '}';
+    }
 }

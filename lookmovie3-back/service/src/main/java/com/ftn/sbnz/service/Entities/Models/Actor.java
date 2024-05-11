@@ -1,5 +1,6 @@
 package com.ftn.sbnz.service.Entities.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,6 +12,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@ToString
 @Setter
 @Table(name = "ACTOR")
 public class Actor {
@@ -21,6 +23,14 @@ public class Actor {
     private String Surname;
 
     @OneToMany(mappedBy = "mainActor", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Film> mainActorFilms;
 
+    @Override
+    public String toString() {
+        return "Actor{" +
+                "id=" + id +
+                ", Name='" + Name + '\'' +
+                ", Surname='" + Surname + '\'' + '}';
+    }
 }
