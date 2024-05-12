@@ -1,0 +1,43 @@
+package rules.cep;
+dialect  "mvel"
+
+
+import com.ftn.sbnz.service.Entities.Models.FilmGenre;
+import com.ftn.sbnz.service.Entities.Events.FilmRating;
+import java.util.UUID;
+
+
+declare GenreRecommendation
+    @role( event )
+end
+
+declare GenreRecommendation
+    userId: UUID
+    genre: FilmGenre
+end
+
+global FilmGenre genre;
+global UUID userId;
+
+
+rule "Same genre rating occurred 2 times last week"
+agenda-group "cep_genre"
+when
+    Number(intValue > 2) from accumulate(
+        FilmRating(user.getId() == userId, film.getGenre() == genre)
+        over window:time(7d), count()
+    )
+then
+    System.out.println("User " + userId + " has watched " + genre + " genre 3 times in last week");
+end
+
+rule "Print count of films with same genre"
+agenda-group "cep_genre"
+when
+    accumulate(
+        FilmRating(),
+        $count : count()
+    )
+then
+    System.out.println("Number of films with genre " + genre + ": " + $count);
+end

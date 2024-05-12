@@ -22,4 +22,8 @@ public class KieSessionConfig {
     public KieSession kieSession() {
         return kieContainer.newKieSession("ksession");
     }
+    @Bean
+    public KieSession kieSessionCep() {
+        return kieContainer.newKieSession("cepKsession");
+    }
 }

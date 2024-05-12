@@ -3,6 +3,7 @@ package com.ftn.sbnz.service.Services;
 import com.ftn.sbnz.service.Entities.Events.FilmRating;
 import com.ftn.sbnz.service.Entities.Events.FilmReview;
 import com.ftn.sbnz.service.Entities.Models.Film;
+import com.ftn.sbnz.service.Entities.Models.FilmGenre;
 import com.ftn.sbnz.service.Entities.Models.User;
 import com.ftn.sbnz.service.Repositories.FilmRatingRepository;
 import com.ftn.sbnz.service.Repositories.FilmRepository;
@@ -123,6 +124,16 @@ public class FilmEventService {
         Film filmFromRepo = filmRepository.findById(recommendedFilm.getId()).orElseThrow(() -> new IllegalArgumentException("Film not found"));
 
 
+        kieSession.setGlobal("genre", film.getGenre());
+        kieSession.setGlobal("userId", user.getId());
+
+        //print all objects in ksession
+        for (FactHandle factHandle : kieSession.getFactHandles()) {
+            System.out.println(kieSession.getObject(factHandle));
+        }
+        kieSession.getAgenda().getAgendaGroup("cep_genre").setFocus();
+        fired = kieSession.fireAllRules();
+        System.out.println("Fired " + fired + " rules");
         return filmFromRepo;
     }
 }
