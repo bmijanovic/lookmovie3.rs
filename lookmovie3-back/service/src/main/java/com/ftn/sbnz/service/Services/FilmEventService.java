@@ -2,12 +2,10 @@ package com.ftn.sbnz.service.Services;
 
 import com.ftn.sbnz.service.Entities.Events.FilmRating;
 import com.ftn.sbnz.service.Entities.Events.FilmReview;
+import com.ftn.sbnz.service.Entities.Events.FilmWatch;
 import com.ftn.sbnz.service.Entities.Models.Film;
 import com.ftn.sbnz.service.Entities.Models.User;
-import com.ftn.sbnz.service.Repositories.FilmRatingRepository;
-import com.ftn.sbnz.service.Repositories.FilmRepository;
-import com.ftn.sbnz.service.Repositories.FilmReviewRepository;
-import com.ftn.sbnz.service.Repositories.UserRepository;
+import com.ftn.sbnz.service.Repositories.*;
 import org.drools.core.common.DefaultFactHandle;
 import org.kie.api.KieServices;
 import org.kie.api.runtime.KieContainer;
@@ -34,6 +32,9 @@ public class FilmEventService {
 
     @Autowired
     private FilmReviewRepository filmReviewRepository;
+
+    @Autowired
+    private FilmWatchedRepository filmWatchRepository;
 
     @Autowired
     private KieContainer kieContainer;
@@ -124,5 +125,52 @@ public class FilmEventService {
 
 
         return filmFromRepo;
+    }
+
+    public Film filmWathced(User u, UUID filmId, Integer duration) {
+        Film film = filmRepository.findById(filmId).orElseThrow(() -> new IllegalArgumentException("Film not found"));
+        User user = userRepository.findById(u.getId()).orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        if (duration < film.getDuration()) {
+            return null;
+        }
+        FilmWatch filmWatch = new FilmWatch();
+        filmWatch.setId(UUID.randomUUID());
+        filmWatch.setFilm(film);
+        filmWatch.setUser(user);
+        filmWatch.setTimestamp(Date.from(Instant.now()));
+
+        filmWatchRepository.save(filmWatch);
+        kieSession.setGlobal("userId", user.getId());
+        kieSession.insert(filmWatch);
+
+        kieSession.getAgenda().getAgendaGroup("govno").setFocus();
+        int fired = kieSession.fireAllRules();
+        System.out.println("Fired " + fired + " rules");
+
+        QueryResults results = kieSession.getQueryResults("getUserById", user.getId());
+        for (QueryResultsRow row : results) {
+            user = (User) row.get("$user");
+        }
+        System.out.println(user);
+
+        user.update(user);
+        userRepository.save(user);
+
+        Film recommendedFilm = null;
+        QueryResults results2 = kieSession.getQueryResults("getLastUserRecommendation", user.getId());
+        for (QueryResultsRow row : results2) {
+            recommendedFilm = (Film) row.get("$film");
+            System.out.println("Recommended film: " + recommendedFilm.getName());
+        }
+        Film filmFromRepo = filmRepository.findById(recommendedFilm.getId()).orElseThrow(() -> new IllegalArgumentException("Film not found"));
+
+
+        return filmFromRepo;
+
+
+
+
+
     }
 }

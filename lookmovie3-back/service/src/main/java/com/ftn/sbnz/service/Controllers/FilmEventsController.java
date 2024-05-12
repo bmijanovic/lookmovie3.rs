@@ -2,6 +2,7 @@ package com.ftn.sbnz.service.Controllers;
 
 import com.ftn.sbnz.service.Controllers.DTOs.FilmRatingDTO;
 import com.ftn.sbnz.service.Controllers.DTOs.FilmReviewDTO;
+import com.ftn.sbnz.service.Controllers.DTOs.FilmWatchedDTO;
 import com.ftn.sbnz.service.Entities.Events.FilmReview;
 import com.ftn.sbnz.service.Entities.Models.Film;
 import com.ftn.sbnz.service.Entities.Models.User;
@@ -33,6 +34,17 @@ public class FilmEventsController {
             return ResponseEntity.badRequest().build();
         }
         Film recommendedFilm = filmEventService.rateFilm(user, dto.getFilmId(), dto.getRating());
+        return ResponseEntity.ok(recommendedFilm);
+    }
+    @PostMapping("/watched")
+    @Valid
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    public ResponseEntity<Film> watchedTillTheEnd(Authentication authentication, @Valid @RequestBody FilmWatchedDTO dto) {
+        User user = (User) authentication.getPrincipal();
+        if (user == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        Film recommendedFilm = filmEventService.filmWathced(user, dto.getFilmId(), dto.getDuration());
         return ResponseEntity.ok(recommendedFilm);
     }
 
