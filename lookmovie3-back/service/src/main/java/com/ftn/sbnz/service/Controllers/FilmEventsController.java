@@ -3,6 +3,7 @@ package com.ftn.sbnz.service.Controllers;
 import com.ftn.sbnz.service.Controllers.DTOs.FilmRatingDTO;
 import com.ftn.sbnz.service.Controllers.DTOs.FilmReviewDTO;
 import com.ftn.sbnz.service.Controllers.DTOs.FilmWatchedDTO;
+import com.ftn.sbnz.service.Controllers.DTOs.FilmWishlistDTO;
 import com.ftn.sbnz.service.Entities.Events.FilmReview;
 import com.ftn.sbnz.service.Entities.Models.Film;
 import com.ftn.sbnz.service.Entities.Models.User;
@@ -34,6 +35,18 @@ public class FilmEventsController {
             return ResponseEntity.badRequest().build();
         }
         Film recommendedFilm = filmEventService.rateFilm(user, dto.getFilmId(), dto.getRating());
+        return ResponseEntity.ok(recommendedFilm);
+    }
+
+    @PostMapping("/wishlist")
+    @Valid
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    public ResponseEntity<Film> wishlist(Authentication authentication, @Valid @RequestBody FilmWishlistDTO dto) {
+        User user = (User) authentication.getPrincipal();
+        if (user == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        Film recommendedFilm = filmEventService.wishlisted(user, dto.getFilmId());
         return ResponseEntity.ok(recommendedFilm);
     }
     @PostMapping("/watched")
