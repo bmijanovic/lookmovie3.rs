@@ -1,0 +1,75 @@
+package rules.forward;
+
+
+import com.ftn.sbnz.service.Entities.Events.FilmWishlist;
+import com.ftn.sbnz.service.Entities.Models.User;
+import com.ftn.sbnz.service.Entities.Models.Film;
+import com.ftn.sbnz.service.Entities.Models.FilmGenre;
+import java.util.UUID;
+
+
+
+
+rule "hello FilmWishlist"
+no-loop
+agenda-group "wishlist"
+
+when
+    $filmRating : FilmWishlist(isDone == false)
+then
+    System.out.println("FilmWish inserted");
+end
+
+rule "wishlisted"
+no-loop
+agenda-group "wishlist"
+when
+    $filmRating : FilmWishlist( $film : film, isDone == false)
+    $user : User(id == userId)
+then
+    System.out.println("Wishlisted film : " + $film.getName() + " by user " + $user.getUsername());
+    likedFilm = $film;
+    modify($user) {
+        getWishlist().add($film);
+    }
+    modify($user){
+        setGotRecommendation(false);
+    }
+    modify($filmRating) {
+        setIsDone(true);
+    }
+end
+
+rule "film added to wishlist"
+no-loop
+agenda-group "wishlist"
+when
+    $user : User(id == userId, $wishlist : wishlist, gotRecommendation == false)
+    eval($wishlist.size() > 0)
+    $film : Film() from $wishlist.get($wishlist.size() - 1)
+then
+    System.out.println("Film " + $film.getName() + " " + $film.getId() + " added to wishlist " + $user.getUsername());
+    modify($user) {
+        getLikedGenres().add($film.getGenre());
+    }
+end
+
+
+rule "genre added to liked genres wishlist"
+no-loop
+agenda-group "wishlist"
+when
+    $user : User(id == userId , $likedGenres : likedGenres, gotRecommendation == false)
+    eval($likedGenres.size() > 0)
+    $genre : FilmGenre() from $likedGenres.get($likedGenres.size() - 1)
+    $film : Film(genre == $genre,  id != likedFilm.getId())
+then
+    System.out.println("Genre " + $genre + " added to liked genres by user " + $user.getUsername());
+    System.out.println("Recommended mmmmmmmmm: " + $film.getName());
+    modify($user) {
+        setGotRecommendation(true);
+    }
+    insert(new Recommendation($film, userId));
+end
+
+
