@@ -207,6 +207,7 @@ public class FilmEventService {
 
         filmWatchRepository.save(filmWatch);
         kieSession.setGlobal("userId", user.getId());
+        kieSession.setGlobal("likedFilm", film);
         kieSession.insert(filmWatch);
 
         kieSession.getAgenda().getAgendaGroup("watched").setFocus();
