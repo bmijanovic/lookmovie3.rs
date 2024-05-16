@@ -20,17 +20,6 @@ global FilmGenre genre;
 global UUID userId;
 
 
-rule "Same genre rating occurred 2 times last week"
-agenda-group "cep_genre"
-when
-    Number(intValue > 2) from accumulate(
-        FilmRating(user.getId() == userId, film.getGenre() == genre)
-        over window:time(7d), count()
-    )
-then
-    System.out.println("User " + userId + " has watched " + genre + " genre 3 times in last week");
-end
-
 rule "Print count of films with same genre"
 agenda-group "cep_genre"
 when
@@ -40,4 +29,15 @@ when
     )
 then
     System.out.println("Number of films with genre " + genre + ": " + $count);
+end
+
+rule "2 and more genre recommendations in last week"
+agenda-group "cep_genre"
+when
+    Number(intValue > 1) from accumulate(
+        GenreRecommendation(userId == userId, genre == (FilmGenre)genre)
+        over window:time(7d), count(1)
+    )
+then
+    System.out.println("User " + userId + " has received 2 or more genre recommendations in last week");
 end

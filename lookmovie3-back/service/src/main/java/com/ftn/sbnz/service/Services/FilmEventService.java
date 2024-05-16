@@ -88,6 +88,16 @@ public class FilmEventService {
         }
         Film filmFromRepo = filmRepository.findById(recommendedFilm.getId()).orElseThrow(() -> new IllegalArgumentException("Film not found"));
 
+        kieSession.setGlobal("genre", film.getGenre());
+        kieSession.setGlobal("userId", user.getId());
+
+        //print all objects in ksession
+        for (FactHandle factHandle : kieSession.getFactHandles()) {
+            System.out.println(kieSession.getObject(factHandle));
+        }
+        kieSession.getAgenda().getAgendaGroup("cep_genre").setFocus();
+        fired = kieSession.fireAllRules();
+        System.out.println("Fired " + fired + " rules");
 
         return filmFromRepo;
 
@@ -199,7 +209,7 @@ public class FilmEventService {
         kieSession.setGlobal("userId", user.getId());
         kieSession.insert(filmWatch);
 
-        kieSession.getAgenda().getAgendaGroup("govno").setFocus();
+        kieSession.getAgenda().getAgendaGroup("watched").setFocus();
         int fired = kieSession.fireAllRules();
         System.out.println("Fired " + fired + " rules");
 

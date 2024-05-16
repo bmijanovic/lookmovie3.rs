@@ -1,0 +1,45 @@
+template header
+    activityType
+    activityClass
+    message
+
+package rules.templates;
+
+import com.ftn.sbnz.service.Entities.Models.FilmGenre;
+import com.ftn.sbnz.service.Entities.Events.*;
+import java.util.UUID;
+declare GenreRecommendation
+    @role( event )
+end
+declare GenreRecommendation
+    userId: UUID
+    genre: FilmGenre
+end
+global FilmGenre genre;
+global UUID userId;
+
+
+template "genre-recommendation"
+
+
+rule "Same genre @{activityType} occurred 2 times last week"
+agenda-group "cep_genre"
+when
+    Number(intValue > 2) from accumulate(
+        @{activityClass}(user.getId() == userId)
+        over window:time(7d), count(1)
+    )
+then
+    System.out.println("User " + userId + " has @{message} " + genre + " genre 3 times in last week");
+    insert(new GenreRecommendation(userId, genre));
+end
+
+rule "Hello @{activityType}"
+agenda-group "cep_genre"
+when
+    $activity: @{activityClass}()
+then
+    System.out.println("User has @{message} ");
+end
+
+end template

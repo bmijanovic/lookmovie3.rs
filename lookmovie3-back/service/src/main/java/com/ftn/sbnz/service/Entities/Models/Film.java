@@ -25,6 +25,7 @@ public class Film {
     private String name;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private FilmGenre genre;
 
     @Column(nullable = false)
