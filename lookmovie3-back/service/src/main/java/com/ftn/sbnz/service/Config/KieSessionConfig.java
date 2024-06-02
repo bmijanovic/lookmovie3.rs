@@ -1,31 +1,35 @@
 package com.ftn.sbnz.service.Config;
 
+import com.ftn.sbnz.service.Helper.SessionBuilder;
 import org.drools.decisiontable.ExternalSpreadsheetCompiler;
 import org.kie.api.KieBase;
 import org.kie.api.KieBaseConfiguration;
 import org.kie.api.KieServices;
-import org.kie.api.builder.KieBuilder;
-import org.kie.api.builder.KieFileSystem;
-import org.kie.api.builder.Message;
-import org.kie.api.builder.ReleaseId;
+import org.kie.api.builder.*;
+import org.kie.api.builder.model.KieBaseModel;
+import org.kie.api.builder.model.KieModuleModel;
 import org.kie.api.conf.EventProcessingOption;
+import org.kie.api.definition.KiePackage;
+import org.kie.api.definition.rule.Rule;
+import org.kie.api.io.ResourceType;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.conf.ClockTypeOption;
+import org.kie.api.runtime.rule.FactHandle;
+import org.kie.internal.utils.KieHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.StringReader;
+import java.io.*;
+import java.util.Collection;
 
 @Configuration
 @EnableTransactionManagement
 public class KieSessionConfig {
 
-    private final KieContainer kieContainer;
+    private KieContainer kieContainer;
 
     @Autowired
     public KieSessionConfig(KieContainer kieContainer) {
@@ -33,12 +37,25 @@ public class KieSessionConfig {
     }
 
     @Bean
-    public KieSession kieSession()
-    {
-        KieSession kieSession = null;
+    public KieSession kieSession() {
+        SessionBuilder sessionBuilder = new SessionBuilder();
+        sessionBuilder.addRules("./kjar/src/main/resources/rules/forward/forward.drl");
+        sessionBuilder.addRules("./kjar/src/main/resources/rules/forward/comment.drl");
+        sessionBuilder.addRules("./kjar/src/main/resources/rules/forward/watched.drl");
+        sessionBuilder.addRules("./kjar/src/main/resources/rules/forward/wishlist.drl");
+        sessionBuilder.addRules("./kjar/src/main/resources/rules/cep/cep_genre_recommendation.drl");
+        sessionBuilder.addTemplate("./kjar/src/main/resources/rules/templates/cep-genre-template.drt", "./kjar/src/main/resources/rules/templates/cep-genre-template.xlsx");
+        return sessionBuilder.build();
+    }
+    @Bean
+    public KieSession kieSessionCep() {
+        return kieContainer.newKieSession("cepKsession");
+    }
+
+    private String generateRulesFromTemplate(String templatePath, String dataPath) {
         try {
-            File templateFile = new File("./kjar/src/main/resources/rules/templates/cep-genre-template.drt");
-            File dataFile = new File("./kjar/src/main/resources/rules/templates/cep-genre-template.xlsx");
+            File templateFile = new File(templatePath);
+            File dataFile = new File(dataPath);
 
             InputStream template = new FileInputStream(templateFile);
             InputStream data = new FileInputStream(dataFile);
@@ -47,31 +64,12 @@ public class KieSessionConfig {
             String drl = converter.compile(data, template, 2, 1);
 
             System.out.println(drl);
+            return drl;
 
-            KieServices kieServices = KieServices.Factory.get();
-            KieFileSystem kfs = kieServices.newKieFileSystem();
 
-            kfs.write("src/main/resources/rules/templates/rules.drl", kieServices.getResources().newReaderResource(new StringReader(drl)));
-
-            KieBuilder kieBuilder = kieServices.newKieBuilder(kfs);
-            kieBuilder.buildAll();
-
-            KieContainer kieContainer = kieServices.newKieContainer(kieServices.newReleaseId("com.ftn.sbnz", "kjar", "0.0.1-SNAPSHOT"));
-            kieSession = kieContainer.newKieSession("ksession");
-
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (kieSession == null) {
-            kieSession = kieContainer.newKieSession("ksession");
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
         }
 
-        return kieSession;
-
-    }
-    @Bean
-    public KieSession kieSessionCep() {
-        return kieContainer.newKieSession("cepKsession");
     }
 }

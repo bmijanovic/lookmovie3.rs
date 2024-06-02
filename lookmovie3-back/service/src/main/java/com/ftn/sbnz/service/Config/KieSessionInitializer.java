@@ -11,10 +11,17 @@ import org.kie.api.KieBaseConfiguration;
 import org.kie.api.KieServices;
 import org.kie.api.builder.KieBuilder;
 import org.kie.api.builder.KieFileSystem;
+import org.kie.api.builder.KieModule;
 import org.kie.api.builder.Message;
+import org.kie.api.builder.model.KieBaseModel;
+import org.kie.api.builder.model.KieModuleModel;
 import org.kie.api.conf.EventProcessingOption;
+import org.kie.api.io.ResourceType;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.conf.ClockTypeOption;
+import org.kie.api.runtime.rule.FactHandle;
+import org.kie.internal.utils.KieHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -24,16 +31,17 @@ import org.drools.template.ObjectDataCompiler;
 
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.StringReader;
 
 @Component
 public class KieSessionInitializer implements ApplicationRunner {
 
     @Autowired
-    private final KieSession kieSession;
+    private KieSession kieSession;
 
     @Autowired
     private final FilmRepository filmRepository;
@@ -51,6 +59,7 @@ public class KieSessionInitializer implements ApplicationRunner {
     public void run(ApplicationArguments args) {
         System.out.println("Initializing KieSession");
 
+
         // Get all films
         for (Film f : filmRepository.findAll()) {
             kieSession.insert(f);
@@ -60,13 +69,7 @@ public class KieSessionInitializer implements ApplicationRunner {
         for (User u : userRepository.findAll()) {
             kieSession.insert(u);
         }
-
-        // Generate rules from template
-        generateRulesFromTemplate();
     }
 
-    private void generateRulesFromTemplate() {
 
-
-    }
 }

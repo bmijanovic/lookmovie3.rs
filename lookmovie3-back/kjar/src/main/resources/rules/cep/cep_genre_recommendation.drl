@@ -12,7 +12,7 @@ declare GenreRecommendation
 end
 
 declare GenreRecommendation
-    userId: UUID
+    userid: UUID
     genre: FilmGenre
 end
 
@@ -35,8 +35,8 @@ rule "2 and more genre recommendations in last week"
 agenda-group "cep_genre"
 when
     Number(intValue > 1) from accumulate(
-        GenreRecommendation(userId == userId, genre == (FilmGenre)genre)
-        over window:time(7d), count(1)
+        GenreRecommendation()
+        over window:time(7d), count()
     )
 then
     System.out.println("User " + userId + " has received 2 or more genre recommendations in last week");
