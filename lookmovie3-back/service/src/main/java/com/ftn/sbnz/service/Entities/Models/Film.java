@@ -43,6 +43,9 @@ public class Film {
     @Column(nullable = false)
     private String description;
 
+    @Column(nullable = true , length = 20000)
+    private String image;
+
     private List<Awards> awards;
 
     @Override
