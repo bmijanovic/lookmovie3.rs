@@ -88,6 +88,11 @@ public class User implements UserDetails{
 			inverseJoinColumns = @JoinColumn(name = "film_id", referencedColumnName = "id"))
 	private List<Film> wishlist;
 
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "user_recommended_films",
+			joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+			inverseJoinColumns = @JoinColumn(name = "film_id", referencedColumnName = "id"))
+	private List<Film> recommendedFilms;
 
 
 

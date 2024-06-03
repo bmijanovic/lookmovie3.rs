@@ -1,12 +1,11 @@
 package com.ftn.sbnz.service.Entities.Events;
 
-
 import com.ftn.sbnz.service.Entities.Models.Film;
 import com.ftn.sbnz.service.Entities.Models.User;
 import jakarta.persistence.*;
 import lombok.*;
-import org.kie.api.definition.type.Timestamp;
 import org.kie.api.definition.type.Role;
+import org.kie.api.definition.type.Timestamp;
 
 import java.util.Date;
 import java.util.UUID;
@@ -20,7 +19,7 @@ import java.util.UUID;
 @Table(name = "FILM_WATCH")
 @Role(Role.Type.EVENT)
 @Timestamp("timestamp")
-public class FilmWatch {
+public class FilmWishlist {
     @Id
     @Column(name = "id", columnDefinition = "uuid")
     private UUID id;
@@ -35,5 +34,6 @@ public class FilmWatch {
     private User user;
 
     private Boolean isDone = false;
+
 
 }

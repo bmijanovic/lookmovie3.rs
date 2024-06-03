@@ -73,6 +73,7 @@ when
     eval($likedActors.size() > 0)
     $actor : Actor() from $likedActors.get($likedActors.size() - 1)
     $film : Film(mainActor.getId() == $actor.getId(), id != likedFilm.getId())
+    not(Recommendation(film == $film, userId == userId))
 then
     System.out.println("        Actor " + $actor.getName() + " added to liked actors by user " + $user.getUsername());
     System.out.println("        Recommended mmmmmmmmm: " + $film.getName());
