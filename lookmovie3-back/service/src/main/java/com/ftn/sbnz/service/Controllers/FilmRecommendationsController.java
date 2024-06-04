@@ -31,4 +31,11 @@ public class FilmRecommendationsController {
         List<Film> recommendedFilms = filmRecommendationsService.getRecommendationsForUser(user);
         return ResponseEntity.ok(recommendedFilms);
     }
+
+    @GetMapping("/global-recommend")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    public ResponseEntity<List<Film>> getGlobalRecommendations() {
+        List<Film> recommendedFilms = filmRecommendationsService.getGlobalRecommendations();
+        return ResponseEntity.ok(recommendedFilms);
+    }
 }

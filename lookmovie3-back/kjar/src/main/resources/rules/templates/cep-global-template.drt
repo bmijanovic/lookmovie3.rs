@@ -1,0 +1,44 @@
+template header
+    activityType
+    activityClass
+    message
+
+package rules.cep;
+
+import com.ftn.sbnz.service.Entities.Models.FilmGenre;
+import com.ftn.sbnz.service.Entities.Models.Genre;
+import com.ftn.sbnz.service.Entities.Models.Global;
+import com.ftn.sbnz.service.Entities.Models.User;
+import com.ftn.sbnz.service.Entities.Events.*;
+import java.util.ArrayList;
+
+import java.util.UUID;
+
+
+template "global-recommendation"
+
+rule "film is @{message} by at least 20% users"
+salience 10
+when
+    $global: Global()
+    $userCount: Integer() from accumulate(
+        $u: User(),
+        count($u)
+    )
+    $activities: ArrayList() from accumulate(
+        $activity: @{activityClass}(film.getId() == $global.getFilm().getId()) over window:time(7d), collectList($activity)
+    )
+then
+    if($activities.size() > Math.ceil($userCount * 0.2)) {
+        System.out.println("Film is @{message} by at least 20% users");
+        insert(new GlobalRecommendation($global.getFilm(), "ACTIVITY"));
+    }
+end
+
+
+
+
+
+
+
+end template

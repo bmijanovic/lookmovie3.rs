@@ -1,0 +1,118 @@
+package rules.cep;
+dialect  "mvel"
+
+
+import com.ftn.sbnz.service.Entities.Models.FilmGenre;
+import com.ftn.sbnz.service.Entities.Models.Film;
+import com.ftn.sbnz.service.Entities.Events.FilmRating;
+import java.util.UUID;
+import java.util.ArrayDeque;
+import com.ftn.sbnz.service.Entities.Models.Global
+import javax.swing.plaf.synth.SynthTableHeaderUI;
+
+declare GlobalRecommendation
+    @role( event )
+    recommendedFilm: Film
+    type: String
+end
+
+declare GlobalList
+    @role( event )
+    list: ArrayDeque
+end
+
+rule "At least 3 ratings with avg greater than 4"
+salience 10
+when
+    $global: Global()
+    $count: Number(intValue >= 3) from accumulate(
+            FilmRating(film.getId() == $global.getFilm().getId())
+            over window:time(7d), count()
+    )
+    eval($count >= 3)
+    $avg: Number(doubleValue >= 4) from accumulate(
+            FilmRating(film.getId() == $global.getFilm().getId(), $rating: rating)
+            over window:time(7d), average($rating)
+    )
+then
+    insert(new GlobalRecommendation($global.getFilm(), "RATING"));
+end
+
+
+rule "Inserted GlobalRecommendation ACTIVITY"
+salience 10
+when
+    $gr: GlobalRecommendation(type.equals("ACTIVITY"))
+    $gl: GlobalList()
+    not GlobalList(this after $gl)
+then
+    System.out.println("Global recommendation ACTIVITY: " + $gr.recommendedFilm.getName());
+    if($gl.getList().size() < 5 && !$gl.getList().contains($gr.recommendedFilm)){
+        modify($gl){
+            getList().addLast($gr.recommendedFilm);
+        }
+    }
+end
+
+rule "Inserted GlobalRecommendation RATING"
+salience 10
+when
+    $gr: GlobalRecommendation(type.equals("RATING"))
+    $gl: GlobalList()
+    not GlobalList(this after $gl)
+then
+    System.out.println("Global recommendation RATING: " + $gr.recommendedFilm.getName());
+    if($gl.getList().size() < 5 && !$gl.getList().contains($gr.recommendedFilm)){
+        modify($gl){
+            getList().addLast($gr.recommendedFilm);
+        }
+    }
+end
+
+rule "Both global recommendations in last 7 days"
+salience 10
+when
+    $global: Global()
+    $gr1: ArrayList() from accumulate(
+        $activity:
+        GlobalRecommendation(type.equals("ACTIVITY"), recommendedFilm.getId() == $global.getFilm().getId())
+        over window:time(7d), collectList($activity)
+    )
+    $gr2: ArrayList() from accumulate(
+        $activity:
+        GlobalRecommendation(type.equals("RATING"), recommendedFilm.getId() == $global.getFilm().getId())
+        over window:time(7d), collectList($activity)
+    )
+    eval($gr1.size() > 0 && $gr2.size() > 0)
+    $gl: GlobalList()
+    not GlobalList(this after $gl)
+then
+    if(!$gl.getList().contains($global.getFilm()))
+    {
+        modify($gl){
+            getList().addFirst($global.getFilm());
+        }
+    }
+
+
+end
+
+
+
+rule "make global list for this week"
+salience 20
+when
+    $glcount: Number(intValue() == 0) from accumulate(
+        GlobalList() over window:time(7d), count()
+    )
+    eval($glcount == 0)
+then
+    System.out.println("Making global list for this week");
+    insert(new GlobalList(new ArrayDeque()));
+end
+
+
+query getGlobalList
+    $gl: GlobalList($list: list)
+    not GlobalList(this after $gl)
+end
