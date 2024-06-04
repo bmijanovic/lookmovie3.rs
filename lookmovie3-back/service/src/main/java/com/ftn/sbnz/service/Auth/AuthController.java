@@ -1,6 +1,7 @@
 package com.ftn.sbnz.service.Auth;
 
 
+import com.ftn.sbnz.service.Controllers.DTOs.UserDTO;
 import com.ftn.sbnz.service.Entities.Models.User;
 import com.ftn.sbnz.service.Auth.DTOs.LoginRequest;
 import com.ftn.sbnz.service.Auth.DTOs.TokenResponse;
@@ -35,7 +36,7 @@ public class AuthController {
 	}
 
     @GetMapping("/me")
-     public UUID me(Authentication authentication, HttpServletRequest request) {
+     public UserDTO me(Authentication authentication, HttpServletRequest request) {
         // Print cookies from the request
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
@@ -47,7 +48,7 @@ public class AuthController {
         // Return user ID if authenticated
         if (authentication != null && authentication.isAuthenticated() && authentication.getPrincipal() instanceof User) {
             User user = (User) authentication.getPrincipal();
-            return user.getId();
+            return new UserDTO(user.getId(), user.getName(), user.getEmail() , user.getRoles().get(0).getAuthority());
         } else {
             // Handle the case where authentication is not available or not valid
             return null;
