@@ -6,6 +6,8 @@ import com.ftn.sbnz.service.Entities.Models.FilmGenre;
 import com.ftn.sbnz.service.Entities.Models.Film;
 import com.ftn.sbnz.service.Entities.Events.FilmRating;
 import java.util.UUID;
+import com.ftn.sbnz.service.Entities.Models.Global;
+
 
 
 //declare GenreRecommendation
@@ -26,14 +28,20 @@ declare MakeList
 end
 
 
-global UUID userId;
-
 rule "inserted genre"
 salience -1
 when
     $genre : Genre()
 then
     delete($genre);
+end
+
+rule "inserted global"
+salience -1
+when
+    $global : Global()
+then
+    delete($global);
 end
 
 rule "print all genre recommendations"
@@ -51,20 +59,20 @@ rule "2 and more genre recommendations in last week"
 salience 10
 when
     $genre : Genre()
-    $userId : UUID() from userId
+    $global: Global()
     Number(intValue > 1) from accumulate(
-        GenreRecommendation(userid == $userId, recommendedGenre.equals($genre.getGenre())) over window:time(7d), count()
+        GenreRecommendation(userid == $global.getUserId(), recommendedGenre.equals($genre.getGenre())) over window:time(7d), count()
     )
     $genreRecs: ArrayList() from accumulate(
-        $gr: GenreRecommendation(userid == $userId, recommendedGenre.equals($genre.getGenre())) over window:time(7d), collectList($gr)
+        $gr: GenreRecommendation(userid == $global.getUserId(), recommendedGenre.equals($genre.getGenre())) over window:time(7d), collectList($gr)
     )
 
 then
-    System.out.println("User " + userId + " has received 2 or more genre " + $genre.getGenre() + " recommendations in last week");
+    System.out.println("User " + $global.getUserId() + " has received 2 or more genre " + $genre.getGenre() + " recommendations in last week");
     for(GenreRecommendation gr : $genreRecs){
         delete(gr);
     }
-    insert(new MakeList(new ArrayList(), $genre.getGenre(), userId));
+    insert(new MakeList(new ArrayList(), $genre.getGenre(), $global.getUserId()));
 
 end
 

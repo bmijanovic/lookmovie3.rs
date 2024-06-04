@@ -4,10 +4,7 @@ import com.ftn.sbnz.service.Entities.Events.FilmRating;
 import com.ftn.sbnz.service.Entities.Events.FilmReview;
 import com.ftn.sbnz.service.Entities.Events.FilmWatch;
 import com.ftn.sbnz.service.Entities.Events.FilmWishlist;
-import com.ftn.sbnz.service.Entities.Models.Film;
-import com.ftn.sbnz.service.Entities.Models.FilmGenre;
-import com.ftn.sbnz.service.Entities.Models.Genre;
-import com.ftn.sbnz.service.Entities.Models.User;
+import com.ftn.sbnz.service.Entities.Models.*;
 import com.ftn.sbnz.service.Repositories.*;
 import org.drools.core.common.DefaultFactHandle;
 import org.kie.api.KieServices;
@@ -67,8 +64,7 @@ public class FilmEventService {
         filmReview.setIsDone(false);
         filmReviewRepository.save(filmReview);
 
-        kieSession.setGlobal("likedFilm", film);
-        kieSession.setGlobal("userId", user.getId());
+        kieSession.insert(new Global(user.getId(), film));
         kieSession.insert(filmReview);
         kieSession.insert(new Genre(film.getGenre()));
 
@@ -109,8 +105,7 @@ public class FilmEventService {
         filmRating.setTimestamp(Date.from(Instant.now()));
         filmRatingRepository.save(filmRating);
 
-        kieSession.setGlobal("likedFilm", film);
-        kieSession.setGlobal("userId", user.getId());
+        kieSession.insert(new Global(user.getId(), film));
         kieSession.insert(new Genre(film.getGenre()));
 
         kieSession.insert(filmRating);
@@ -150,8 +145,7 @@ public class FilmEventService {
         filmWishlist.setTimestamp(Date.from(Instant.now()));
         filmWishlistRepository.save(filmWishlist);
 
-        kieSession.setGlobal("likedFilm", film);
-        kieSession.setGlobal("userId", user.getId());
+        kieSession.insert(new Global(user.getId(), film));
         kieSession.insert(filmWishlist);
         kieSession.insert(new Genre(film.getGenre()));
 
@@ -199,8 +193,7 @@ public class FilmEventService {
         filmWatch.setTimestamp(Date.from(Instant.now()));
 
         filmWatchRepository.save(filmWatch);
-        kieSession.setGlobal("userId", user.getId());
-        kieSession.setGlobal("likedFilm", film);
+        kieSession.insert(new Global(user.getId(), film));
         kieSession.insert(filmWatch);
         kieSession.insert(new Genre(film.getGenre()));
 
