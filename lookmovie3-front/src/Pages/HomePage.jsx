@@ -6,6 +6,8 @@ import NavbarComponent from "../Components/NavbarComponent";
 import BasicPagination from "../Components/BasicPagination";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
+import FilmCardComponent from "../Components/FilmCardComponent";
+
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -79,42 +81,7 @@ const HomePage = () => {
         }}
       >
         {films.map((film) => (
-          <Card
-            key={film.id}
-            style={{
-              margin: "10px",
-              width: "200px",
-              height: "300px",
-              backgroundColor: "#333",
-              display: "flex",
-              justifyContent: "center",
-            }}
-          >
-            <CardContent>
-              <h3
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                {film.name}
-              </h3>
-              {film.image && (
-                <img
-                  src={`${film.image}`}
-                  alt={film.name}
-                  style={{
-                    width: "200px",
-                    height: "230px",
-                    objectFit: "cover",
-                  }}
-                />
-              )}
-              {/* <p>{film.description}</p> */} {/* Remove description */}
-              {/* Add more details as needed */}
-            </CardContent>
-          </Card>
+          <FilmCardComponent film={film}  />
         ))}
       </div>
     </div>
