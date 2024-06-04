@@ -155,7 +155,8 @@ public class FilmEventService {
         kieSession.insert(filmWishlist);
         kieSession.insert(new Genre(film.getGenre()));
 
-
+//      change focus
+        kieSession.getAgenda().getAgendaGroup("wishlist").setFocus();
         int fired = kieSession.fireAllRules();
         System.out.println("Fired " + fired + " rules");
 

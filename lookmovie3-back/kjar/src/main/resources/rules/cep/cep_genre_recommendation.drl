@@ -3,18 +3,28 @@ dialect  "mvel"
 
 
 import com.ftn.sbnz.service.Entities.Models.FilmGenre;
+import com.ftn.sbnz.service.Entities.Models.Film;
 import com.ftn.sbnz.service.Entities.Events.FilmRating;
 import java.util.UUID;
 
 
-declare GenreRecommendation
-    @role( event )
-end
+//declare GenreRecommendation
+//    @role( event )
+//end
 
 declare GenreRecommendation
+    @role( event )
     userid: UUID
     recommendedGenre: String
 end
+
+declare MakeList
+    @role( event )
+    list: java.util.ArrayList
+    genre: String
+    userId: UUID
+end
+
 
 global UUID userId;
 
@@ -24,6 +34,15 @@ when
     $genre : Genre()
 then
     delete($genre);
+end
+
+rule "print all genre recommendations"
+//agenda-group "cep_genre"
+salience 10
+when
+    $genreRec: GenreRecommendation()
+then
+    System.out.println("User " + $genreRec.userid + " has received genre recommendation: " + $genreRec.recommendedGenre);
 end
 
 
@@ -36,17 +55,61 @@ when
     Number(intValue > 1) from accumulate(
         GenreRecommendation(userid == $userId, recommendedGenre.equals($genre.getGenre())) over window:time(7d), count()
     )
+    $genreRecs: ArrayList() from accumulate(
+        $gr: GenreRecommendation(userid == $userId, recommendedGenre.equals($genre.getGenre())) over window:time(7d), collectList($gr)
+    )
+
 then
     System.out.println("User " + userId + " has received 2 or more genre " + $genre.getGenre() + " recommendations in last week");
+    for(GenreRecommendation gr : $genreRecs){
+        delete(gr);
+    }
+    insert(new MakeList(new ArrayList(), $genre.getGenre(), userId));
+
 end
 
-rule "print all genre recommendations"
-//agenda-group "cep_genre"
+
+rule "insered make list"
 salience 10
 when
-    $genreRec: GenreRecommendation()
+    $makeList: MakeList($list : list, $genre : genre)
+    $filmsWithGenre: ArrayList() from accumulate(
+        $film: Film(genre.equals($genre)),
+        collectList($film)
+    )
 then
-    System.out.println("User " + $genreRec.userid + " has received genre recommendation: " + $genreRec.recommendedGenre);
+    System.out.println("Make list");
+    for (int i = 0; i < Math.min(5, $filmsWithGenre.size()); i++) {
+        $list.add($filmsWithGenre.get(i));
+    }
+    System.out.println("List size: " + $list.size());
 end
+
+
+rule "make list do not have 5 films"
+salience 10
+when
+    $makeList: MakeList($list : list, $genre : genre)
+    eval($list.size() < 5)
+    $filmsWithGenre: ArrayList() from accumulate(
+        $film: Film(!genre.equals($genre)),
+        collectList($film)
+    )
+then
+    System.out.println("Make list do not have 5 films");
+    int granica = Math.min(5 - $list.size(), $filmsWithGenre.size());
+    for (int i = 0; i < granica; i++) {
+        $list.add($filmsWithGenre.get(i));
+    }
+end
+
+query getMakeList(UUID userId)
+    $makeList: MakeList($userId : userId, $list : list)
+    not MakeList(userId == $userId, this after $makeList)
+end
+
+
+
+
 
 
