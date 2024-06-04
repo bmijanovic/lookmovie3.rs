@@ -6,6 +6,7 @@ import com.ftn.sbnz.service.Entities.Events.FilmWatch;
 import com.ftn.sbnz.service.Entities.Events.FilmWishlist;
 import com.ftn.sbnz.service.Entities.Models.Film;
 import com.ftn.sbnz.service.Entities.Models.FilmGenre;
+import com.ftn.sbnz.service.Entities.Models.Genre;
 import com.ftn.sbnz.service.Entities.Models.User;
 import com.ftn.sbnz.service.Repositories.*;
 import org.drools.core.common.DefaultFactHandle;
@@ -116,9 +117,12 @@ public class FilmEventService {
 
         kieSession.setGlobal("likedFilm", film);
         kieSession.setGlobal("userId", user.getId());
+        kieSession.setGlobal("genre", film.getGenre());
+        kieSession.insert(new Genre(film.getGenre()));
+
         kieSession.insert(filmRating);
 
-        kieSession.getAgenda().getAgendaGroup("rating").setFocus();
+//        kieSession.getAgenda().getAgendaGroup("rating").setFocus();
         int fired = kieSession.fireAllRules();
         System.out.println("Fired " + fired + " rules");
 
@@ -137,20 +141,11 @@ public class FilmEventService {
             recommendedFilm = (Film) row.get("$film");
             System.out.println("Recommended film: " + recommendedFilm.getName());
         }
-        Film filmFromRepo = filmRepository.findById(recommendedFilm.getId()).orElseThrow(() -> new IllegalArgumentException("Film not found"));
-
-
-        kieSession.setGlobal("genre", film.getGenre());
-        kieSession.setGlobal("userId", user.getId());
-
-        //print all objects in ksession
-        for (FactHandle factHandle : kieSession.getFactHandles()) {
-            System.out.println(kieSession.getObject(factHandle));
+        if (recommendedFilm == null) {
+            return null;
         }
-        kieSession.getAgenda().getAgendaGroup("cep_genre").setFocus();
-        fired = kieSession.fireAllRules();
-        System.out.println("Fired " + fired + " rules");
-        return filmFromRepo;
+
+        return filmRepository.findById(recommendedFilm.getId()).orElseThrow(() -> new IllegalArgumentException("Film not found"));
     }
 
     public Film wishlisted(User u, UUID filmId) {

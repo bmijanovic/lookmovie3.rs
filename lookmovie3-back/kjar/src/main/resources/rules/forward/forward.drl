@@ -31,7 +31,7 @@ end
 
 rule "5 star rating"
 no-loop
-agenda-group "rating"
+//agenda-group "rating"
 when
     $filmRating : FilmRating(rating == 5, $film : film, isDone == false)
     $user : User(id == userId)
@@ -51,7 +51,7 @@ end
 
 rule "film added to liked films"
 no-loop
-agenda-group "rating"
+//agenda-group "rating"
 when
     $user : User(id == userId, $likedFilms : likedFilms, gotRecommendation == false)
     eval($likedFilms.size() > 0)
@@ -66,11 +66,11 @@ end
 
 rule "genre added to liked genres"
 no-loop
-agenda-group "rating"
+//agenda-group "rating"
 when
     $user : User(id == userId , $likedGenres : likedGenres, gotRecommendation == false)
     eval($likedGenres.size() > 0)
-    $genre : FilmGenre() from $likedGenres.get($likedGenres.size() - 1)
+    $genre : String() from $likedGenres.get($likedGenres.size() - 1)
     $film : Film(genre == $genre,  id != likedFilm.getId())
     not(Recommendation(film == $film, userId == userId))
 then

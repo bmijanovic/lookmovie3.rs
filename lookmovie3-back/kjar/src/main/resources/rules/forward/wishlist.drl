@@ -61,7 +61,7 @@ agenda-group "wishlist"
 when
     $user : User(id == userId , $likedGenres : likedGenres, gotRecommendation == false)
     eval($likedGenres.size() > 0)
-    $genre : FilmGenre() from $likedGenres.get($likedGenres.size() - 1)
+    $genre : String() from $likedGenres.get($likedGenres.size() - 1)
     $film : Film(genre == $genre,  id != likedFilm.getId())
     not(Recommendation(film == $film, userId == userId))
 then

@@ -49,27 +49,7 @@ public class KieSessionConfig {
     }
     @Bean
     public KieSession kieSessionCep() {
+
         return kieContainer.newKieSession("cepKsession");
-    }
-
-    private String generateRulesFromTemplate(String templatePath, String dataPath) {
-        try {
-            File templateFile = new File(templatePath);
-            File dataFile = new File(dataPath);
-
-            InputStream template = new FileInputStream(templateFile);
-            InputStream data = new FileInputStream(dataFile);
-
-            ExternalSpreadsheetCompiler converter = new ExternalSpreadsheetCompiler();
-            String drl = converter.compile(data, template, 2, 1);
-
-            System.out.println(drl);
-            return drl;
-
-
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-
     }
 }
