@@ -6,18 +6,17 @@ import com.ftn.sbnz.service.Entities.Events.FilmWatch;
 import com.ftn.sbnz.service.Entities.Models.User;
 import com.ftn.sbnz.service.Entities.Models.Film;
 import com.ftn.sbnz.service.Entities.Models.Director;
-
+import com.ftn.sbnz.service.Entities.Models.Global;
 
 
 
 rule "hello FilmWatched"
 no-loop
-agenda-group "watched"
+//agenda-group "watched"
 when
     $filmWatch : FilmWatch(isDone == false)
 then
     System.out.println("Film watched");
-     System.out.println(userId);
 end
 
 
@@ -25,13 +24,16 @@ end
 
 rule "Full Film Watched"
 no-loop
-agenda-group "watched"
+//agenda-group "watched"
 when
+    $global: Global()
     $filmWatched : FilmWatch($film : film, isDone == false)
-    $user : User(id == userId)
+    $user : User(id == $global.getUserId())
 then
     System.out.println("Full Watched Film " + $film.getName() + " by user " + $user.getUsername());
-    likedFilm = $film;
+    modify($global){
+        setFilm($film);
+    }
     modify($user) {
         getWatchedFilms().add($film);
     }
@@ -49,9 +51,10 @@ end
 
 rule "Added Watched Film"
 no-loop
-agenda-group "watched"
+//agenda-group "watched"
 when
-    $user : User(id == userId , $watchedFilms : watchedFilms, gotRecommendation == false)
+    $global: Global()
+    $user : User(id == $global.getUserId() , $watchedFilms : watchedFilms, gotRecommendation == false)
     eval($watchedFilms.size() > 0)
     $film : Film($director: director) from $watchedFilms.get($watchedFilms.size() - 1)
 then
@@ -63,18 +66,20 @@ end
 
 rule "director added to liked directors"
 no-loop
-agenda-group "watched"
+//agenda-group "watched"
 when
-    $user : User(id == userId , $likedDirectors : likedDirectors, gotRecommendation == false)
+    $global: Global()
+    $user : User(id == $global.getUserId() , $likedDirectors : likedDirectors, gotRecommendation == false)
     eval($likedDirectors.size() > 0)
     $director : Director() from $likedDirectors.get($likedDirectors.size() - 1)
-    $film : Film(director.getId() == $director.getId(), id != likedFilm.getId())
-    not(Recommendation(film == $film, userId == userId))
+    $film : Film(director.getId() == $director.getId(), id != $global.getFilm().getId())
+    not(Recommendation(film == $film, userId == $global.getUserId()))
 then
     modify($user) {
         setGotRecommendation(true);
     }
-    insert(new Recommendation($film, userId));
+    insert(new Recommendation($film, $global.getUserId()));
+    delete($global);
 
 end
 

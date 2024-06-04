@@ -5,10 +5,10 @@ import com.ftn.sbnz.service.Entities.Events.FilmRating;
 import com.ftn.sbnz.service.Entities.Models.User;
 import com.ftn.sbnz.service.Entities.Models.Film;
 import com.ftn.sbnz.service.Entities.Models.FilmGenre;
+import com.ftn.sbnz.service.Entities.Models.Global;
 import java.util.UUID;
 
-global UUID userId;
-global Film likedFilm;
+
 
 declare Recommendation
     @role(event)
@@ -31,13 +31,16 @@ end
 
 rule "5 star rating"
 no-loop
-agenda-group "rating"
+//agenda-group "rating"
 when
+    $global: Global()
     $filmRating : FilmRating(rating == 5, $film : film, isDone == false)
-    $user : User(id == userId)
+    $user : User(id == $global.getUserId())
 then
     System.out.println("5 star rating for film " + $film.getName() + " by user " + $user.getUsername());
-    likedFilm = $film;
+    modify($global){
+        setFilm($film);
+    }
     modify($user) {
         getLikedFilms().add($film);
     }
@@ -51,13 +54,14 @@ end
 
 rule "film added to liked films"
 no-loop
-agenda-group "rating"
+//agenda-group "rating"
 when
-    $user : User(id == userId, $likedFilms : likedFilms, gotRecommendation == false)
+    $global: Global()
+    $user : User(id == $global.getUserId(), $likedFilms : likedFilms, gotRecommendation == false)
     eval($likedFilms.size() > 0)
     $film : Film() from $likedFilms.get($likedFilms.size() - 1)
 then
-    System.out.println("Film " + $film.getName() + " " + $film.getId() + " added to liked films by user " + $user.getUsername());
+    System.out.println("    Film " + $film.getName() + " " + $film.getId() + " added to liked films by user " + $user.getUsername());
     modify($user) {
         getLikedGenres().add($film.getGenre());
     }
@@ -66,20 +70,22 @@ end
 
 rule "genre added to liked genres"
 no-loop
-agenda-group "rating"
+//agenda-group "rating"
 when
-    $user : User(id == userId , $likedGenres : likedGenres, gotRecommendation == false)
+    $global: Global()
+    $user : User(id == $global.getUserId() , $likedGenres : likedGenres, gotRecommendation == false)
     eval($likedGenres.size() > 0)
-    $genre : FilmGenre() from $likedGenres.get($likedGenres.size() - 1)
-    $film : Film(genre == $genre,  id != likedFilm.getId())
-    not(Recommendation(film == $film, userId == userId))
+    $genre : String() from $likedGenres.get($likedGenres.size() - 1)
+    $film : Film(genre == $genre,  id != $global.getFilm().getId())
+    not(Recommendation(film == $film, userId == $global.getUserId()))
 then
-    System.out.println("Genre " + $genre + " added to liked genres by user " + $user.getUsername());
-    System.out.println("Recommended mmmmmmmmm: " + $film.getName());
+    System.out.println("    Genre " + $genre + " added to liked genres by user " + $user.getUsername());
+    System.out.println("    Recommended mmmmmmmmm: " + $film.getName());
     modify($user) {
         setGotRecommendation(true);
     }
-    insert(new Recommendation($film, userId));
+    insert(new Recommendation($film, $global.getUserId()));
+    delete($global);
 end
 
 

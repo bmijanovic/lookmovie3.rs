@@ -3,43 +3,59 @@ template header
     activityClass
     message
 
-package rules.templates;
+package rules.cep;
 
 import com.ftn.sbnz.service.Entities.Models.FilmGenre;
+import com.ftn.sbnz.service.Entities.Models.Genre;
+import com.ftn.sbnz.service.Entities.Models.Global;
 import com.ftn.sbnz.service.Entities.Events.*;
+import java.util.ArrayList;
+
 import java.util.UUID;
-declare GenreRecommendation
-    @role( event )
-end
-declare GenreRecommendation
-    userId: UUID
-    genre: FilmGenre
-end
-global FilmGenre genre;
-global UUID userId;
 
 
 template "genre-recommendation"
 
 
 rule "Same genre @{activityType} occurred 2 times last week"
-agenda-group "cep_genre"
+//agenda-group "cep_genre"
+salience 10
 when
+    $genre : Genre(isDone == false)
+    $global: Global()
     Number(intValue > 2) from accumulate(
-        @{activityClass}(user.getId() == userId)
+        @{activityClass}(user.getId() == $global.getUserId(), ((String)film.getGenre()).equals((String)$genre.getGenre()))
         over window:time(7d), count(1)
     )
+    $ratings : ArrayList() from accumulate(
+        $rating : @{activityClass}(
+            user.getId() == $global.getUserId(),
+            ((String) film.getGenre()).equals((String) $genre.getGenre())
+        ) over window:time(7d),
+        collectList($rating)
+    )
 then
-    System.out.println("User " + userId + " has @{message} " + genre + " genre 3 times in last week");
-    insert(new GenreRecommendation(userId, genre));
+    System.out.println("User " + $global.getUserId() + " has @{message} " + $genre.getGenre() + " genre 3 times in last week");
+    insert(new GenreRecommendation($global.getUserId(), $genre.getGenre()));
+    modify($genre) {
+        setIsDone(true);
+    }
+    for(@{activityClass} rating : $ratings) {
+        delete(rating);
+    }
 end
 
+
+
 rule "Hello @{activityType}"
-agenda-group "cep_genre"
+//agenda-group "cep_genre"
+salience 20
 when
     $activity: @{activityClass}()
 then
     System.out.println("User has @{message} ");
 end
+
+
 
 end template

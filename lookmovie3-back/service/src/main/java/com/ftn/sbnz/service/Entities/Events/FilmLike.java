@@ -36,4 +36,7 @@ public class FilmLike {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
+
+    private Boolean isDone = false;
+
 }
