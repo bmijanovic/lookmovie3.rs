@@ -4,9 +4,7 @@ import com.ftn.sbnz.service.Entities.Events.FilmRating;
 import com.ftn.sbnz.service.Entities.Events.FilmReview;
 import com.ftn.sbnz.service.Entities.Events.FilmWatch;
 import com.ftn.sbnz.service.Entities.Events.FilmWishlist;
-import com.ftn.sbnz.service.Entities.Models.Film;
-import com.ftn.sbnz.service.Entities.Models.FilmGenre;
-import com.ftn.sbnz.service.Entities.Models.User;
+import com.ftn.sbnz.service.Entities.Models.*;
 import com.ftn.sbnz.service.Repositories.*;
 import org.drools.core.common.DefaultFactHandle;
 import org.kie.api.KieServices;
@@ -17,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.kie.api.runtime.rule.QueryResults;
 import org.kie.api.runtime.rule.QueryResultsRow;
+
+import java.lang.reflect.Array;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
@@ -61,13 +61,13 @@ public class FilmEventService {
         filmReview.setUser(user);
         filmReview.setFilm(film);
         filmReview.setTimestamp(Date.from(Instant.now()));
+        filmReview.setIsDone(false);
         filmReviewRepository.save(filmReview);
 
-        kieSession.setGlobal("likedFilm", film);
-        kieSession.setGlobal("userId", user.getId());
+        kieSession.insert(new Global(user.getId(), film));
         kieSession.insert(filmReview);
+        kieSession.insert(new Genre(film.getGenre()));
 
-        kieSession.getAgenda().getAgendaGroup("review").setFocus();
         int fired = kieSession.fireAllRules();
         System.out.println("Fired " + fired + " rules");
 
@@ -86,20 +86,11 @@ public class FilmEventService {
             recommendedFilm = (Film) row.get("$film");
             System.out.println("Recommended film: " + recommendedFilm.getName());
         }
-        Film filmFromRepo = filmRepository.findById(recommendedFilm.getId()).orElseThrow(() -> new IllegalArgumentException("Film not found"));
-
-        kieSession.setGlobal("genre", film.getGenre());
-        kieSession.setGlobal("userId", user.getId());
-
-        //print all objects in ksession
-        for (FactHandle factHandle : kieSession.getFactHandles()) {
-            System.out.println(kieSession.getObject(factHandle));
+        if (recommendedFilm == null) {
+            return null;
         }
-        kieSession.getAgenda().getAgendaGroup("cep_genre").setFocus();
-        fired = kieSession.fireAllRules();
-        System.out.println("Fired " + fired + " rules");
 
-        return filmFromRepo;
+        return filmRepository.findById(recommendedFilm.getId()).orElseThrow(() -> new IllegalArgumentException("Film not found"));
 
     }
 
@@ -114,11 +105,11 @@ public class FilmEventService {
         filmRating.setTimestamp(Date.from(Instant.now()));
         filmRatingRepository.save(filmRating);
 
-        kieSession.setGlobal("likedFilm", film);
-        kieSession.setGlobal("userId", user.getId());
+        kieSession.insert(new Global(user.getId(), film));
+        kieSession.insert(new Genre(film.getGenre()));
+
         kieSession.insert(filmRating);
 
-        kieSession.getAgenda().getAgendaGroup("rating").setFocus();
         int fired = kieSession.fireAllRules();
         System.out.println("Fired " + fired + " rules");
 
@@ -137,20 +128,11 @@ public class FilmEventService {
             recommendedFilm = (Film) row.get("$film");
             System.out.println("Recommended film: " + recommendedFilm.getName());
         }
-        Film filmFromRepo = filmRepository.findById(recommendedFilm.getId()).orElseThrow(() -> new IllegalArgumentException("Film not found"));
-
-
-        kieSession.setGlobal("genre", film.getGenre());
-        kieSession.setGlobal("userId", user.getId());
-
-        //print all objects in ksession
-        for (FactHandle factHandle : kieSession.getFactHandles()) {
-            System.out.println(kieSession.getObject(factHandle));
+        if (recommendedFilm == null) {
+            return null;
         }
-        kieSession.getAgenda().getAgendaGroup("cep_genre").setFocus();
-        fired = kieSession.fireAllRules();
-        System.out.println("Fired " + fired + " rules");
-        return filmFromRepo;
+
+        return filmRepository.findById(recommendedFilm.getId()).orElseThrow(() -> new IllegalArgumentException("Film not found"));
     }
 
     public Film wishlisted(User u, UUID filmId) {
@@ -163,10 +145,11 @@ public class FilmEventService {
         filmWishlist.setTimestamp(Date.from(Instant.now()));
         filmWishlistRepository.save(filmWishlist);
 
-        kieSession.setGlobal("likedFilm", film);
-        kieSession.setGlobal("userId", user.getId());
+        kieSession.insert(new Global(user.getId(), film));
         kieSession.insert(filmWishlist);
+        kieSession.insert(new Genre(film.getGenre()));
 
+//      change focus
         kieSession.getAgenda().getAgendaGroup("wishlist").setFocus();
         int fired = kieSession.fireAllRules();
         System.out.println("Fired " + fired + " rules");
@@ -186,10 +169,14 @@ public class FilmEventService {
             recommendedFilm = (Film) row.get("$film");
             System.out.println("Recommended film: " + recommendedFilm.getName());
         }
-        Film filmFromRepo = filmRepository.findById(recommendedFilm.getId()).orElseThrow(() -> new IllegalArgumentException("Film not found"));
+        if (recommendedFilm == null) {
+            return null;
+        }
+        ArrayList<Film> films = new ArrayList<>();
+        films.add(recommendedFilm);
 
 
-        return filmFromRepo;
+        return filmRepository.findById(recommendedFilm.getId()).orElseThrow(() -> new IllegalArgumentException("Film not found"));
     }
 
     public Film filmWathced(User u, UUID filmId, Integer duration) {
@@ -206,11 +193,11 @@ public class FilmEventService {
         filmWatch.setTimestamp(Date.from(Instant.now()));
 
         filmWatchRepository.save(filmWatch);
-        kieSession.setGlobal("userId", user.getId());
-        kieSession.setGlobal("likedFilm", film);
+        kieSession.insert(new Global(user.getId(), film));
         kieSession.insert(filmWatch);
+        kieSession.insert(new Genre(film.getGenre()));
 
-        kieSession.getAgenda().getAgendaGroup("watched").setFocus();
+
         int fired = kieSession.fireAllRules();
         System.out.println("Fired " + fired + " rules");
 
@@ -229,10 +216,11 @@ public class FilmEventService {
             recommendedFilm = (Film) row.get("$film");
             System.out.println("Recommended film: " + recommendedFilm.getName());
         }
-        Film filmFromRepo = filmRepository.findById(recommendedFilm.getId()).orElseThrow(() -> new IllegalArgumentException("Film not found"));
+        if (recommendedFilm == null) {
+            return null;
+        }
 
-
-        return filmFromRepo;
+        return filmRepository.findById(recommendedFilm.getId()).orElseThrow(() -> new IllegalArgumentException("Film not found"));
 
 
 

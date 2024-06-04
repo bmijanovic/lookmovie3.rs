@@ -54,7 +54,7 @@ public class User implements UserDetails{
 	private List<Role> roles;
 
 	@Column(name = "liked_genres")
-	private List<FilmGenre> likedGenres = new ArrayList<>();
+	private List<String> likedGenres = new ArrayList<>();
 
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "user_liked_films",
