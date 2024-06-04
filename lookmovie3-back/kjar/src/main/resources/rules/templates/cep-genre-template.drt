@@ -8,10 +8,12 @@ package rules.cep;
 import com.ftn.sbnz.service.Entities.Models.FilmGenre;
 import com.ftn.sbnz.service.Entities.Models.Genre;
 import com.ftn.sbnz.service.Entities.Events.*;
+import java.util.ArrayList;
+
 import java.util.UUID;
 
 
-global String genre;
+
 global UUID userId;
 
 
@@ -27,11 +29,21 @@ when
         @{activityClass}(user.getId() == userId, ((String)film.getGenre()).equals((String)$genre.getGenre()))
         over window:time(7d), count(1)
     )
+    $ratings : ArrayList() from accumulate(
+        $rating : @{activityClass}(
+            user.getId() == userId,
+            ((String) film.getGenre()).equals((String) $genre.getGenre())
+        ) over window:time(7d),
+        collectList($rating)
+    )
 then
-    System.out.println("User " + userId + " has @{message} " + genre + " genre 3 times in last week");
-    insert(new GenreRecommendation(userId, genre));
+    System.out.println("User " + userId + " has @{message} " + $genre.getGenre() + " genre 3 times in last week");
+    insert(new GenreRecommendation(userId, $genre.getGenre()));
     modify($genre) {
         setIsDone(true);
+    }
+    for(@{activityClass} rating : $ratings) {
+        delete(rating);
     }
 end
 

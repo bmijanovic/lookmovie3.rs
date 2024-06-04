@@ -21,7 +21,7 @@ end
 
 rule "hello FilmReview"
 no-loop
-agenda-group "review"
+//agenda-group "review"
 when
     $filmReview : FilmReview(isDone == false)
 then
@@ -30,7 +30,7 @@ end
 
 rule "positive review"
 no-loop
-agenda-group "review"
+//agenda-group "review"
 when
     $filmReview : FilmReview($film : film, isPositive == true, isDone == false)
     $user : User(id == userId)
@@ -51,7 +51,7 @@ end
 
 rule "film added to liked films for actor"
 no-loop
-agenda-group "review"
+//agenda-group "review"
 when
     $user : User(id == userId, $likedFilms : likedFilms, gotRecommendation == false)
     eval($likedFilms.size() > 0)
@@ -67,7 +67,7 @@ end
 
 rule "actor added to liked actors"
 no-loop
-agenda-group "review"
+//agenda-group "review"
 when
     $user : User(id == userId , $likedActors : likedActors, gotRecommendation == false)
     eval($likedActors.size() > 0)

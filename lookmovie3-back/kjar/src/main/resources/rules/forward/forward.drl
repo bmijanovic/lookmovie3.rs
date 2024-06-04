@@ -57,7 +57,7 @@ when
     eval($likedFilms.size() > 0)
     $film : Film() from $likedFilms.get($likedFilms.size() - 1)
 then
-    System.out.println("Film " + $film.getName() + " " + $film.getId() + " added to liked films by user " + $user.getUsername());
+    System.out.println("    Film " + $film.getName() + " " + $film.getId() + " added to liked films by user " + $user.getUsername());
     modify($user) {
         getLikedGenres().add($film.getGenre());
     }
@@ -74,8 +74,8 @@ when
     $film : Film(genre == $genre,  id != likedFilm.getId())
     not(Recommendation(film == $film, userId == userId))
 then
-    System.out.println("Genre " + $genre + " added to liked genres by user " + $user.getUsername());
-    System.out.println("Recommended mmmmmmmmm: " + $film.getName());
+    System.out.println("    Genre " + $genre + " added to liked genres by user " + $user.getUsername());
+    System.out.println("    Recommended mmmmmmmmm: " + $film.getName());
     modify($user) {
         setGotRecommendation(true);
     }

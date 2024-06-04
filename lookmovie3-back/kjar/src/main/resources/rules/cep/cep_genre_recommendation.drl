@@ -16,7 +16,6 @@ declare GenreRecommendation
     recommendedGenre: String
 end
 
-global String genre;
 global UUID userId;
 
 rule "inserted genre"
@@ -38,7 +37,7 @@ when
         GenreRecommendation(userid == $userId, recommendedGenre.equals($genre.getGenre())) over window:time(7d), count()
     )
 then
-    System.out.println("User " + userId + " has received 2 or more genre " + genre + " recommendations in last week");
+    System.out.println("User " + userId + " has received 2 or more genre " + $genre.getGenre() + " recommendations in last week");
 end
 
 rule "print all genre recommendations"

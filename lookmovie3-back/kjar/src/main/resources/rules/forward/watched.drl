@@ -12,7 +12,7 @@ import com.ftn.sbnz.service.Entities.Models.Director;
 
 rule "hello FilmWatched"
 no-loop
-agenda-group "watched"
+//agenda-group "watched"
 when
     $filmWatch : FilmWatch(isDone == false)
 then
@@ -25,7 +25,7 @@ end
 
 rule "Full Film Watched"
 no-loop
-agenda-group "watched"
+//agenda-group "watched"
 when
     $filmWatched : FilmWatch($film : film, isDone == false)
     $user : User(id == userId)
@@ -49,7 +49,7 @@ end
 
 rule "Added Watched Film"
 no-loop
-agenda-group "watched"
+//agenda-group "watched"
 when
     $user : User(id == userId , $watchedFilms : watchedFilms, gotRecommendation == false)
     eval($watchedFilms.size() > 0)
@@ -63,7 +63,7 @@ end
 
 rule "director added to liked directors"
 no-loop
-agenda-group "watched"
+//agenda-group "watched"
 when
     $user : User(id == userId , $likedDirectors : likedDirectors, gotRecommendation == false)
     eval($likedDirectors.size() > 0)
