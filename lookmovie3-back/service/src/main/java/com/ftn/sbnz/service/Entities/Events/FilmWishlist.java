@@ -34,6 +34,5 @@ public class FilmWishlist {
     private User user;
 
     private Boolean isDone = false;
-
-
+    private Boolean isDoneCep = false;
 }

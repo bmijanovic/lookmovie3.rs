@@ -103,6 +103,7 @@ public class FilmEventService {
         filmRating.setUser(user);
         filmRating.setFilm(film);
         filmRating.setTimestamp(Date.from(Instant.now()));
+        filmRating.setIsDone(false);
         filmRatingRepository.save(filmRating);
 
         kieSession.insert(new Global(user.getId(), film));
@@ -143,6 +144,7 @@ public class FilmEventService {
         filmWishlist.setUser(user);
         filmWishlist.setFilm(film);
         filmWishlist.setTimestamp(Date.from(Instant.now()));
+        filmWishlist.setIsDone(false);
         filmWishlistRepository.save(filmWishlist);
 
         kieSession.insert(new Global(user.getId(), film));
@@ -190,6 +192,7 @@ public class FilmEventService {
         filmWatch.setId(UUID.randomUUID());
         filmWatch.setFilm(film);
         filmWatch.setUser(user);
+        filmWatch.setIsDone(false);
         filmWatch.setTimestamp(Date.from(Instant.now()));
 
         filmWatchRepository.save(filmWatch);

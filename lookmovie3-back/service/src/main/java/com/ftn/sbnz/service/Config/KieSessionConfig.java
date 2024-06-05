@@ -44,7 +44,10 @@ public class KieSessionConfig {
         sessionBuilder.addRules("./kjar/src/main/resources/rules/forward/watched.drl");
         sessionBuilder.addRules("./kjar/src/main/resources/rules/forward/wishlist.drl");
         sessionBuilder.addRules("./kjar/src/main/resources/rules/cep/cep_genre_recommendation.drl");
+        sessionBuilder.addRules("./kjar/src/main/resources/rules/cep/cep_global_recommendation.drl");
         sessionBuilder.addTemplate("./kjar/src/main/resources/rules/templates/cep-genre-template.drt", "./kjar/src/main/resources/rules/templates/cep-genre-template.xlsx");
+        sessionBuilder.addTemplate("./kjar/src/main/resources/rules/templates/cep-global-template.drt", "./kjar/src/main/resources/rules/templates/cep-global-template.xlsx");
+
         return sessionBuilder.build();
     }
     @Bean

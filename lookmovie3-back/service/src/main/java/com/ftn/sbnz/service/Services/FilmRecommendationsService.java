@@ -9,9 +9,7 @@ import org.kie.api.runtime.rule.QueryResultsRow;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class FilmRecommendationsService {
@@ -38,5 +36,19 @@ public class FilmRecommendationsService {
 
 
         return user.getRecommendedFilms();
+    }
+
+    public LinkedList<Film> getGlobalRecommendations() {
+        LinkedList<Film> makeList = new LinkedList<>();
+        QueryResults results = kieSession.getQueryResults("getGlobalList");
+
+        for (QueryResultsRow row : results) {
+            makeList = (LinkedList<Film>) row.get("$list");
+        }
+        if(makeList == null) {
+            makeList = new LinkedList<>();
+        }
+
+        return makeList;
     }
 }
