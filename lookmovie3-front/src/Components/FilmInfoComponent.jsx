@@ -11,6 +11,7 @@ const FilmInfoComponent = ({ film ,close }) => {
   const [comment, setComment] = useState('');
 
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [actorDialogOpen, setActorDialogOpen] = useState(false);
 
 
 
@@ -22,6 +23,9 @@ const FilmInfoComponent = ({ film ,close }) => {
   const handleCloseDialog = () => {
     setDialogOpen(false);
   };
+  const handleCloseActorDialog = () => {
+    setActorDialogOpen(false);
+  };
 
   const handleRatingChange = (event, newRating) => {
     setRating(newRating);
@@ -29,6 +33,12 @@ const FilmInfoComponent = ({ film ,close }) => {
 
   const handleCommentChange = (event) => {
     setComment(event.target.value);
+  };
+
+  const handleActorClick = () => {
+    let actor = film.mainActor.name + " " + film.mainActor.surname;
+    setActorDialogOpen(true);
+    console.log("Actor clicked:", actor);
   };
   
 
@@ -121,7 +131,7 @@ const FilmInfoComponent = ({ film ,close }) => {
             <Typography variant="body2">
               <strong>Year:</strong> {film.year}
             </Typography>
-            <Typography variant="body2">
+            <Typography variant="body2" sx = {{cursor : 'pointer'}} onClick={handleActorClick}>
               <strong>Main Actor:</strong> {film.mainActor.name + " " + film.mainActor.surname}
             </Typography>
             <Typography variant="body2">
@@ -190,6 +200,12 @@ const FilmInfoComponent = ({ film ,close }) => {
         open={dialogOpen}
         onClose={() => handleCloseDialog()}
         content={<FilmCardComponent film={film}/>}
+      ></InfoDialog>
+      <InfoDialog
+        open={actorDialogOpen}
+        onClose={() => handleCloseActorDialog()}
+        title={film.mainActor.name + " " + film.mainActor.surname}
+        content={<div/>}
       ></InfoDialog>
       </Grid>
     </>
