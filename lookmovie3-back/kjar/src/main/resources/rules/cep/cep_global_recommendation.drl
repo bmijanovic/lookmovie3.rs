@@ -16,6 +16,7 @@ declare GlobalRecommendation
     @role( event )
     recommendedFilm: Film
     type: String
+    isDone: Boolean
 end
 
 declare GlobalList
@@ -37,14 +38,14 @@ when
             over window:time(7d), average($rating)
     )
 then
-    insert(new GlobalRecommendation($global.getFilm(), "RATING"));
+    insert(new GlobalRecommendation($global.getFilm(), "RATING", false));
 end
 
 
 rule "Inserted GlobalRecommendation ACTIVITY"
 salience 10
 when
-    $gr: GlobalRecommendation(type.equals("ACTIVITY"))
+    $gr: GlobalRecommendation(type.equals("ACTIVITY"), isDone == false)
     $gl: GlobalList()
     not GlobalList(this after $gl)
 then
@@ -59,7 +60,7 @@ end
 rule "Inserted GlobalRecommendation RATING"
 salience 10
 when
-    $gr: GlobalRecommendation(type.equals("RATING"))
+    $gr: GlobalRecommendation(type.equals("RATING"), isDone == false)
     $gl: GlobalList()
     not GlobalList(this after $gl)
 then
@@ -77,12 +78,12 @@ when
     $global: Global()
     $gr1: ArrayList() from accumulate(
         $activity:
-        GlobalRecommendation(type.equals("ACTIVITY"), recommendedFilm.getId() == $global.getFilm().getId())
+        GlobalRecommendation(type.equals("ACTIVITY"), recommendedFilm.getId() == $global.getFilm().getId(), isDone == false)
         over window:time(7d), collectList($activity)
     )
     $gr2: ArrayList() from accumulate(
         $activity:
-        GlobalRecommendation(type.equals("RATING"), recommendedFilm.getId() == $global.getFilm().getId())
+        GlobalRecommendation(type.equals("RATING"), recommendedFilm.getId() == $global.getFilm().getId(), isDone == false)
         over window:time(7d), collectList($activity)
     )
     eval($gr1.size() > 0 && $gr2.size() > 0)
@@ -91,6 +92,16 @@ when
 then
     modify($gl){
         getList().addFirst($global.getFilm());
+    }
+    for(GlobalRecommendation gr : $gr1){
+        modify(gr){
+            setIsDone(true);
+        }
+    }
+    for(GlobalRecommendation gr : $gr2){
+        modify(gr){
+            setIsDone(true);
+        }
     }
 
 

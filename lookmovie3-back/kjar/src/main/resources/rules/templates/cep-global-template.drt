@@ -31,7 +31,7 @@ when
 then
     if($activities.size() > Math.ceil($userCount * 0.2)) {
         System.out.println("Film is @{message} by at least 20% users");
-        insert(new GlobalRecommendation($global.getFilm(), "ACTIVITY"));
+        insert(new GlobalRecommendation($global.getFilm(), "ACTIVITY", false));
     }
 end
 
