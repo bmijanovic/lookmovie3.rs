@@ -59,4 +59,50 @@ public class ReportService {
         }
         return null;
     }
+    public HashMap<String, Integer> usersFavouriteActors(User user) {
+        QueryResults results = kieSession.getQueryResults("usersFavouriteActors", user.getId());
+        HashMap<String, Integer> genresMap = new HashMap<>();
+        for (QueryResultsRow row : results) {
+            genresMap = (HashMap<String, Integer>) row.get("$map");
+        }
+        if(genresMap == null) {
+            genresMap = new HashMap<String, Integer>();
+        }
+        if (!genresMap.isEmpty()) {
+            return genresMap;
+        }
+        return null;
+    }
+
+
+
+    public HashMap<Integer, Integer> usersFavouriteWatchtime(User user) {
+        QueryResults results = kieSession.getQueryResults("usersFavouriteWatchtime", user.getId());
+        HashMap<Integer, Integer> genresMap = new HashMap<>();
+        for (QueryResultsRow row : results) {
+            genresMap = (HashMap<Integer, Integer>) row.get("$map");
+        }
+        if(genresMap == null) {
+            genresMap = new HashMap<Integer, Integer>();
+        }
+        if (!genresMap.isEmpty()) {
+            return genresMap;
+        }
+        return null;
+    }
+
+    public HashMap<String, Double> usersFavouriteFilmsRating(User user) {
+        QueryResults results = kieSession.getQueryResults("usersFavouriteFilmsRating", user.getId());
+        HashMap<String, Double> genresMap = new HashMap<>();
+        for (QueryResultsRow row : results) {
+            genresMap = (HashMap<String, Double>) row.get("$map");
+        }
+        if(genresMap == null) {
+            genresMap = new HashMap<String, Double>();
+        }
+        if (!genresMap.isEmpty()) {
+            return genresMap;
+        }
+        return null;
+    }
 }

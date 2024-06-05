@@ -1,10 +1,13 @@
 package rules.query;
 dialect  "mvel"
 import com.ftn.sbnz.service.Entities.Events.FilmWatch;
+import com.ftn.sbnz.service.Entities.Events.FilmRating;
 import com.ftn.sbnz.service.Entities.Models.User;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.Map.Entry;
+import java.util.Calendar;
 
 
 query usersFavouriteGenres(UUID userId)
@@ -63,4 +66,78 @@ function HashMap makeMapDirectors(ArrayList list) {
         }
     }
     return map;
+}
+
+query usersFavouriteActors(UUID userId)
+    $user : User( id == userId )
+    $fw: ArrayList() from collect(FilmWatch(user.getId() == userId))
+    $map: HashMap() from makeMapActors($fw)
+end
+
+function HashMap makeMapActors(ArrayList list) {
+    HashMap<String, Integer> map = new HashMap();
+    for(Object o : list) {
+        FilmWatch fw = (FilmWatch) o;
+        String key = fw.getFilm().getMainActor().getName() + " " + fw.getFilm().getMainActor().getSurname();
+        if(map.containsKey(key)) {
+            map.put(key, map.get(key) + 1);
+        } else {
+            map.put(key, 1);
+        }
+    }
+    return map;
+}
+
+query usersFavouriteWatchtime(UUID userId)
+    $user : User( id == userId )
+    $fw: ArrayList() from collect(FilmWatch(user.getId() == userId))
+    $map: HashMap() from makeMapWatchtime($fw)
+end
+
+function HashMap makeMapWatchtime(ArrayList list) {
+    HashMap<Integer, Integer> map = new HashMap();
+    for(Object o : list) {
+        FilmWatch fw = (FilmWatch) o;
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(fw.getTimestamp());
+        int key = calendar.get(Calendar.HOUR_OF_DAY);
+        if(map.containsKey(key)) {
+            map.put(key, map.get(key) + 1);
+        } else {
+            map.put(key, 1);
+        }
+    }
+    return map;
+}
+
+query usersFavouriteFilmsRating(UUID userId)
+    $user : User( id == userId )
+    $fw: ArrayList() from collect(FilmRating(user.getId() == userId))
+    $map: HashMap() from makeMapFilmsRating($fw)
+end
+
+function HashMap makeMapFilmsRating(ArrayList list) {
+    HashMap<String, Double> ratingSumMap = new HashMap<>();
+    HashMap<String, Integer> ratingCountMap = new HashMap<>();
+
+    for (Object o : list) {
+        FilmRating fw = (FilmRating) o;
+        String filmName = fw.getFilm().getName();
+        Double rating = fw.getRating();
+
+        ratingSumMap.put(filmName, ratingSumMap.getOrDefault(filmName, 0.0) + rating);
+        ratingCountMap.put(filmName, ratingCountMap.getOrDefault(filmName, 0) + 1);
+    }
+
+    HashMap<String, Double> avgRatingMap = new HashMap<>();
+    for (Object e : ratingSumMap.entrySet()) {
+        Entry<String, Double> entry = (Entry<String, Double>) e;
+        String filmName = entry.getKey();
+        Double totalRating = entry.getValue();
+        int count = ratingCountMap.get(filmName);
+        double avgRating = (double) totalRating / count;
+        avgRatingMap.put(filmName, avgRating);
+    }
+
+    return avgRatingMap;
 }

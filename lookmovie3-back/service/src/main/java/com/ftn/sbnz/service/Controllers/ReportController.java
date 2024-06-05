@@ -43,4 +43,31 @@ public class ReportController {
         }
         return ResponseEntity.ok(reportService.usersFavouriteDirectors(user));
     }
+
+    @GetMapping("/users-favourite-actors")
+    public ResponseEntity<HashMap<String, Integer>> usersFavouriteActors(Authentication authentication){
+        User user = (User) authentication.getPrincipal();
+        if (user == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(reportService.usersFavouriteActors(user));
+    }
+
+    @GetMapping("/users-favourite-watchtime")
+    public ResponseEntity<HashMap<Integer, Integer>> usersFavouriteWatchtime(Authentication authentication){
+        User user = (User) authentication.getPrincipal();
+        if (user == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(reportService.usersFavouriteWatchtime(user));
+    }
+
+    @GetMapping("/users-favourite-film-rating")
+    public ResponseEntity<HashMap<String, Double>> usersFavouriteFilmRating(Authentication authentication){
+        User user = (User) authentication.getPrincipal();
+        if (user == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(reportService.usersFavouriteFilmsRating(user));
+    }
 }
