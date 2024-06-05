@@ -1,5 +1,6 @@
 package com.ftn.sbnz.service.Config;
 
+import com.ftn.sbnz.service.Entities.Models.BWItem;
 import com.ftn.sbnz.service.Entities.Models.Film;
 import com.ftn.sbnz.service.Entities.Models.User;
 import com.ftn.sbnz.service.Repositories.FilmRepository;
@@ -25,6 +26,7 @@ import org.kie.internal.utils.KieHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.autoconfigure.info.ProjectInfoAutoConfiguration;
 import org.springframework.stereotype.Component;
 
 import org.drools.template.ObjectDataCompiler;
@@ -48,6 +50,8 @@ public class KieSessionInitializer implements ApplicationRunner {
 
     @Autowired
     private final UserRepository userRepository;
+    @Autowired
+    private ProjectInfoAutoConfiguration projectInfoAutoConfiguration;
 
     public KieSessionInitializer(KieSession kieSession, FilmRepository filmRepository, UserRepository userRepository) {
         this.kieSession = kieSession;
@@ -63,12 +67,18 @@ public class KieSessionInitializer implements ApplicationRunner {
         // Get all films
         for (Film f : filmRepository.findAll()) {
             kieSession.insert(f);
+            if(f.getAward().isEmpty()) continue;
+            BWItem bwItem = new BWItem(f.getName(), f.getAward());
+            kieSession.insert(bwItem);
+            BWItem bwItem2 = new BWItem(f.getMainActor().getName() + " " + f.getMainActor().getSurname(), f.getName());
+            kieSession.insert(bwItem2);
         }
 
         // Get all users
         for (User u : userRepository.findAll()) {
             kieSession.insert(u);
         }
+
     }
 
 
