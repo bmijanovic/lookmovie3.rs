@@ -44,3 +44,23 @@ function HashMap makeMapFilms(ArrayList list) {
     }
     return map;
 }
+
+query usersFavouriteDirectors(UUID userId)
+    $user : User( id == userId )
+    $fw: ArrayList() from collect(FilmWatch(user.getId() == userId))
+    $map: HashMap() from makeMapDirectors($fw)
+end
+
+function HashMap makeMapDirectors(ArrayList list) {
+    HashMap<String, Integer> map = new HashMap();
+    for(Object o : list) {
+        FilmWatch fw = (FilmWatch) o;
+        String key = fw.getFilm().getDirector().getName() + " " + fw.getFilm().getDirector().getSurname();
+        if(map.containsKey(key)) {
+            map.put(key, map.get(key) + 1);
+        } else {
+            map.put(key, 1);
+        }
+    }
+    return map;
+}

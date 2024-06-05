@@ -34,4 +34,13 @@ public class ReportController {
         }
         return ResponseEntity.ok(reportService.usersFavouriteFilms(user));
     }
+
+    @GetMapping("/users-favourite-directors")
+    public ResponseEntity<HashMap<String, Integer>> usersFavouriteDirectors(Authentication authentication){
+        User user = (User) authentication.getPrincipal();
+        if (user == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(reportService.usersFavouriteDirectors(user));
+    }
 }

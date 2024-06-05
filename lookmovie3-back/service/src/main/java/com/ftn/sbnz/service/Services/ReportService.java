@@ -44,4 +44,19 @@ public class ReportService {
         }
         return null;
     }
+
+    public HashMap<String, Integer> usersFavouriteDirectors(User user) {
+        QueryResults results = kieSession.getQueryResults("usersFavouriteDirectors", user.getId());
+        HashMap<String, Integer> genresMap = new HashMap<>();
+        for (QueryResultsRow row : results) {
+            genresMap = (HashMap<String, Integer>) row.get("$map");
+        }
+        if(genresMap == null) {
+            genresMap = new HashMap<String, Integer>();
+        }
+        if (!genresMap.isEmpty()) {
+            return genresMap;
+        }
+        return null;
+    }
 }
