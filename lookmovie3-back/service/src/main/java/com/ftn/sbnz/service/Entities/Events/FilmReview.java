@@ -41,4 +41,5 @@ public class FilmReview {
     private User user;
 
     private Boolean isDone = false;
+    private Boolean isDoneCep = false;
 }

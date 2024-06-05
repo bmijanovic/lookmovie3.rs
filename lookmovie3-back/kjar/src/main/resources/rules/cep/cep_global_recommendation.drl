@@ -7,6 +7,7 @@ import com.ftn.sbnz.service.Entities.Models.Film;
 import com.ftn.sbnz.service.Entities.Events.FilmRating;
 import java.util.UUID;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import com.ftn.sbnz.service.Entities.Models.Global
 import javax.swing.plaf.synth.SynthTableHeaderUI;
 
@@ -90,7 +91,7 @@ then
     if(!$gl.getList().contains($global.getFilm()))
     {
         modify($gl){
-            getList().addFirst($global.getFilm());
+            getList().addLast($global.getFilm());
         }
     }
 
