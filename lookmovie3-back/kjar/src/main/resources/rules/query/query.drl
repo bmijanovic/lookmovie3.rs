@@ -1,0 +1,27 @@
+package rules.query;
+dialect  "mvel"
+import com.ftn.sbnz.service.Entities.Events.FilmWatch;
+import com.ftn.sbnz.service.Entities.Models.User;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.UUID;
+
+
+query usersFavouriteGenres(UUID userId)
+    $user : User( id == userId )
+    $fw: ArrayList() from collect(FilmWatch(user.getId() == userId))
+    $map: HashMap() from makeMap($fw)
+end
+
+function HashMap makeMap(ArrayList list) {
+    HashMap<String, Integer> map = new HashMap();
+    for(Object o : list) {
+        FilmWatch fw = (FilmWatch) o;
+        if(map.containsKey(fw.getFilm().getGenre())) {
+            map.put(fw.getFilm().getGenre(), map.get(fw.getFilm().getGenre()) + 1);
+        } else {
+            map.put(fw.getFilm().getGenre(), 1);
+        }
+    }
+    return map;
+}
