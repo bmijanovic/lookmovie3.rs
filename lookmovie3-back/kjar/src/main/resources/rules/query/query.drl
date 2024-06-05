@@ -10,10 +10,10 @@ import java.util.UUID;
 query usersFavouriteGenres(UUID userId)
     $user : User( id == userId )
     $fw: ArrayList() from collect(FilmWatch(user.getId() == userId))
-    $map: HashMap() from makeMap($fw)
+    $map: HashMap() from makeMapGenres($fw)
 end
 
-function HashMap makeMap(ArrayList list) {
+function HashMap makeMapGenres(ArrayList list) {
     HashMap<String, Integer> map = new HashMap();
     for(Object o : list) {
         FilmWatch fw = (FilmWatch) o;
@@ -21,6 +21,25 @@ function HashMap makeMap(ArrayList list) {
             map.put(fw.getFilm().getGenre(), map.get(fw.getFilm().getGenre()) + 1);
         } else {
             map.put(fw.getFilm().getGenre(), 1);
+        }
+    }
+    return map;
+}
+
+query usersFavouriteFilms(UUID userId)
+    $user : User( id == userId )
+    $fw: ArrayList() from collect(FilmWatch(user.getId() == userId))
+    $map: HashMap() from makeMapFilms($fw)
+end
+
+function HashMap makeMapFilms(ArrayList list) {
+    HashMap<String, Integer> map = new HashMap();
+    for(Object o : list) {
+        FilmWatch fw = (FilmWatch) o;
+        if(map.containsKey(fw.getFilm().getName())) {
+            map.put(fw.getFilm().getName(), map.get(fw.getFilm().getName()) + 1);
+        } else {
+            map.put(fw.getFilm().getName(), 1);
         }
     }
     return map;

@@ -25,4 +25,13 @@ public class ReportController {
         }
         return ResponseEntity.ok(reportService.usersFavouriteGenres(user));
     }
+
+    @GetMapping("/users-favourite-films")
+    public ResponseEntity<HashMap<String, Integer>> usersFavouriteFilms(Authentication authentication){
+        User user = (User) authentication.getPrincipal();
+        if (user == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(reportService.usersFavouriteFilms(user));
+    }
 }
