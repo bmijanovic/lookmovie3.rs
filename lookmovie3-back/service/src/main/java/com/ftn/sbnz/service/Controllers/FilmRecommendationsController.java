@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,8 +35,8 @@ public class FilmRecommendationsController {
 
     @GetMapping("/global-recommend")
     @PreAuthorize("hasAuthority('ROLE_USER')")
-    public ResponseEntity<List<Film>> getGlobalRecommendations() {
-        List<Film> recommendedFilms = filmRecommendationsService.getGlobalRecommendations();
+    public ResponseEntity<LinkedList<Film>> getGlobalRecommendations() {
+        LinkedList<Film> recommendedFilms = filmRecommendationsService.getGlobalRecommendations();
         return ResponseEntity.ok(recommendedFilms);
     }
 }

@@ -24,14 +24,14 @@ when
     $genre : Genre(isDone == false)
     $global: Global()
     Number(intValue > 2) from accumulate(
-        @{activityClass}(user.getId() == $global.getUserId(), ((String)film.getGenre()).equals((String)$genre.getGenre()))
+        @{activityClass}(user.getId() == $global.getUserId(), ((String)film.getGenre()).equals((String)$genre.getGenre()), isDoneCep == false)
         over window:time(7d), count(1)
     )
     $ratings : ArrayList() from accumulate(
         $rating : @{activityClass}(
             user.getId() == $global.getUserId(),
-            ((String) film.getGenre()).equals((String) $genre.getGenre())
-        ) over window:time(7d),
+            ((String) film.getGenre()).equals((String) $genre.getGenre()), isDoneCep == false)
+        over window:time(7d),
         collectList($rating)
     )
 then
@@ -41,7 +41,9 @@ then
         setIsDone(true);
     }
     for(@{activityClass} rating : $ratings) {
-        delete(rating);
+        modify(rating) {
+            setIsDoneCep(true);
+        }
     }
 end
 
