@@ -8,6 +8,7 @@ const BasicSelect = ({
   collection,
   valueParam,
   nameParam,
+  nameParam2 = "",
   visibility = "visible",
 }) => {
   return (
@@ -23,19 +24,19 @@ const BasicSelect = ({
       }}
     >
       <Select
-        sx={{ marginTop: "20px" }}
-        style={{ width: "200px" }}
+        sx={{ marginTop: "20px", backgroundColor: "#333"}}
+        style={{ width: "200px" ,backgroundColor: "#333" }}
         id={label + "-select"}
         key={label + "-select"}
         value={selected ? selected : "x"}
         displayEmpty
         onChange={callback}
       >
-        <MenuItem value={"x"}>{"Select " + label}</MenuItem>
+        <MenuItem  sx = {{backgroundColor : "#333"}} value={"x"}>{"Select " + label}</MenuItem>
 
         {collection.map((item, index) => (
-          <MenuItem key={index} value={item[valueParam]}>
-            {item[nameParam]}
+          <MenuItem sx = {{backgroundColor : "#333"}} key={index} value={item[valueParam]}>
+            {item[nameParam] + " " + item[nameParam2]}
           </MenuItem>
         ))}
       </Select>

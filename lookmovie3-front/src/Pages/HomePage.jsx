@@ -7,83 +7,45 @@ import BasicPagination from "../Components/BasicPagination";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import FilmCardComponent from "../Components/FilmCardComponent";
+import MoviesPage from "./MoviesPage";
+import { Outlet } from "react-router-dom";
 
 
 const HomePage = () => {
   const navigate = useNavigate();
+  const [loggedUser, setLoggedUser] = useState(null);
 
-  const [pagination, setPagination] = useState({ pageNumber: 1, pageSize: 12 });
-  const [totalItems, setTotalItems] = useState(0);
-  const [search, setSearch] = useState("");
-  const [user, setUser] = useState(null);
-  const [films, setFilms] = useState([]);
 
   useEffect(() => {
-    axios
-      .get(`${API_BASE_URL}/auth/me`, { withCredentials: true })
-      .then((response) => {
+    axios.get(`${API_BASE_URL}/auth/me`, {withCredentials: true})
+    .then((response) => {
         console.log(response);
-        setUser(response.data);
-      })
-      .catch((error) => {
+        setLoggedUser(response.data);
+
+    })
+    .catch((error) => {
         console.log(error);
-        navigate("/login");
-      });
+
+    });
+}, []);
+
+  useEffect(() => {
+    if (loggedUser != null && loggedUser.role === "ROLE_ADMIN") {
+      navigate("/admin");
+    } else if (loggedUser != null && loggedUser.role === "ROLE_USER") {
+      navigate("/movies");
+    }
   }, []);
 
-  useEffect(() => {
-    fetchFilms();
-  }, [user, pagination.pageNumber, pagination.pageSize]);
-
-  const handlePageChange = (newPage) => {
-    setPagination({
-      ...pagination,
-      pageNumber: newPage,
-    });
-  };
-
-  const fetchFilms = () => {
-    console.log("Page:", pagination.pageNumber);
-    axios
-      .get(`${API_BASE_URL}/films/`, {
-        params: {
-          Search: search,
-          Page: pagination.pageNumber,
-          PageSize: pagination.pageSize,
-        },
-        withCredentials: true,
-      })
-      .then((response) => {
-        setFilms(response.data.items);
-        setTotalItems(response.data.totalItems);
-        console.log(response);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+ 
 
   return (
     <div>
-      <NavbarComponent />
-      <BasicPagination
-        currentPage={pagination.pageNumber}
-        pageSize={pagination.pageSize}
-        totalItems={totalItems}
-        onPageChange={handlePageChange}
-      />
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        {films.map((film) => (
-          <FilmCardComponent film={film}  />
-        ))}
-      </div>
+      {loggedUser && <NavbarComponent loggedUser={loggedUser}></NavbarComponent>}
+      <Outlet style={{ flex: 1, overflowY: "auto" }}></Outlet>
+
+
+      
     </div>
   );
 };

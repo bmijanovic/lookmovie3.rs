@@ -1,6 +1,9 @@
 package com.ftn.sbnz.service.Controllers;
 
+import com.ftn.sbnz.service.Controllers.DTOs.CreateFilmDTO;
 import com.ftn.sbnz.service.Controllers.DTOs.FilmRatingDTO;
+import com.ftn.sbnz.service.Entities.Models.Actor;
+import com.ftn.sbnz.service.Entities.Models.Director;
 import com.ftn.sbnz.service.Entities.Models.Film;
 import com.ftn.sbnz.service.Entities.Models.User;
 import com.ftn.sbnz.service.Entities.Tools.PageParams;
@@ -32,9 +35,26 @@ public class FilmController {
         return ResponseEntity.ok(films);
     }
 
+    @GetMapping("/get-actors")
+    public ResponseEntity<List<Actor>> getActors() {
+
+        return ResponseEntity.ok(filmService.getActors());
+    }
+
+    @GetMapping("/get-directors")
+    public ResponseEntity<List<Director>> getDirectors() {
+
+        return ResponseEntity.ok(filmService.getDirectors());
+    }
+
     @GetMapping("/main-actor-info/{actor}")
     public ResponseEntity<HashMap<String, Integer>> getMainActorInfo(@PathVariable String actor) {
         return ResponseEntity.ok(filmService.getMainActorInfo(actor));
+    }
+    @PostMapping("/create-film")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<Film> createFilm(@RequestBody CreateFilmDTO film) {
+        return ResponseEntity.ok(filmService.createFilm(film));
     }
 
 }
