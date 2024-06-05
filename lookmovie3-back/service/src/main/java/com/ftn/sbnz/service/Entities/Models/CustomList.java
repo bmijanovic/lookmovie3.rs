@@ -5,6 +5,7 @@ import org.kie.api.definition.rule.All;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @Getter
@@ -34,11 +35,23 @@ public class CustomList {
     }
 
     public Boolean contains(Film film) {
-        return films.contains(film);
+        UUID id = film.getId();
+        for(Film f : films) {
+            if(f.getId().equals(id)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void remove(Film film) {
-        films.remove(film);
+        UUID id = film.getId();
+        for(Film f : films) {
+            if(f.getId().equals(id)) {
+                films.remove(f);
+                return;
+            }
+        }
     }
 
     public void remove(int index) {
