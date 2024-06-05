@@ -1,9 +1,14 @@
 package com.ftn.sbnz.service.Services;
 
+import com.ftn.sbnz.service.Controllers.DTOs.CreateFilmDTO;
+import com.ftn.sbnz.service.Entities.Models.Actor;
 import com.ftn.sbnz.service.Entities.Models.BWUser;
+import com.ftn.sbnz.service.Entities.Models.Director;
 import com.ftn.sbnz.service.Entities.Models.Film;
 import com.ftn.sbnz.service.Entities.Tools.PageParams;
 import com.ftn.sbnz.service.Entities.Tools.Paginated;
+import com.ftn.sbnz.service.Repositories.ActorRepository;
+import com.ftn.sbnz.service.Repositories.DirectorRepository;
 import com.ftn.sbnz.service.Repositories.FilmRepository;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.rule.QueryResults;
@@ -18,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 
@@ -27,6 +33,12 @@ public class FilmService {
     @Qualifier("kieSession")
     @Autowired
     private KieSession kieSession;
+
+    @Autowired
+    private ActorRepository actorRepository;
+
+    @Autowired
+    private DirectorRepository directorRepository;
 
     public Paginated<Film> getAllPaginated(PageParams pageParams) {
         Pageable pageable = (Pageable) PageRequest.of(pageParams.getPage()-1, pageParams.getPageSize());
@@ -53,5 +65,33 @@ public class FilmService {
             return map;
         }
         return null;
+    }
+
+    public List<Actor> getActors() {
+        return actorRepository.findAll();
+
+    }
+
+    public List<Director> getDirectors() {
+        return directorRepository.findAll();
+    }
+
+    public Film createFilm(CreateFilmDTO film) {
+        Film newFilm = new Film();
+        Actor actor = actorRepository.findById(film.getMainActorId()).orElseThrow(() -> new IllegalArgumentException("Actor not found"));
+        Director director = directorRepository.findById(film.getDirectorId()).orElseThrow(() -> new IllegalArgumentException("Director not found"));
+        newFilm.setMainActor(actor);
+        newFilm.setDirector(director);
+        newFilm.setAward(film.getAward().toUpperCase());
+        newFilm.setDescription(film.getDescription());
+        newFilm.setDuration(film.getDuration());
+        newFilm.setGenre(film.getGenre());
+        newFilm.setImage(film.getImage());
+        newFilm.setName(film.getName());
+        newFilm.setYear(film.getYear());
+        newFilm.setId(UUID.randomUUID());
+        return filmRepository.save(newFilm);
+
+
     }
 }
