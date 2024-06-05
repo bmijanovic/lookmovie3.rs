@@ -9,10 +9,7 @@ import org.kie.api.runtime.rule.QueryResultsRow;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class FilmRecommendationsService {
@@ -41,18 +38,15 @@ public class FilmRecommendationsService {
         return user.getRecommendedFilms();
     }
 
-    public List<Film> getGlobalRecommendations() {
-        ArrayList<Film> makeList = new ArrayList<>();
+    public LinkedList<Film> getGlobalRecommendations() {
+        LinkedList<Film> makeList = new LinkedList<>();
         QueryResults results = kieSession.getQueryResults("getGlobalList");
 
         for (QueryResultsRow row : results) {
-            makeList = (ArrayList<Film>) row.get("$list");
+            makeList = (LinkedList<Film>) row.get("$list");
         }
         if(makeList == null) {
-            makeList = new ArrayList<>();
-        }
-        if (!makeList.isEmpty()) {
-            return makeList;
+            makeList = new LinkedList<>();
         }
 
         return makeList;

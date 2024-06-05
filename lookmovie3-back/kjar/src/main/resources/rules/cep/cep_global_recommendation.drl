@@ -4,9 +4,10 @@ dialect  "mvel"
 
 import com.ftn.sbnz.service.Entities.Models.FilmGenre;
 import com.ftn.sbnz.service.Entities.Models.Film;
+import com.ftn.sbnz.service.Entities.Models.CustomList;
 import com.ftn.sbnz.service.Entities.Events.FilmRating;
 import java.util.UUID;
-import java.util.ArrayDeque;
+import java.util.LinkedList;
 import java.util.ArrayList;
 import com.ftn.sbnz.service.Entities.Models.Global
 import javax.swing.plaf.synth.SynthTableHeaderUI;
@@ -19,7 +20,7 @@ end
 
 declare GlobalList
     @role( event )
-    list: ArrayDeque
+    list: CustomList
 end
 
 rule "At least 3 ratings with avg greater than 4"
@@ -88,11 +89,8 @@ when
     $gl: GlobalList()
     not GlobalList(this after $gl)
 then
-    if(!$gl.getList().contains($global.getFilm()))
-    {
-        modify($gl){
-            getList().addLast($global.getFilm());
-        }
+    modify($gl){
+        getList().addFirst($global.getFilm());
     }
 
 
@@ -109,11 +107,11 @@ when
     eval($glcount == 0)
 then
     System.out.println("Making global list for this week");
-    insert(new GlobalList(new ArrayDeque()));
+    insert(new GlobalList(new CustomList(new LinkedList(), 5)));
 end
 
 
 query getGlobalList
-    $gl: GlobalList($list: list)
+    $gl: GlobalList($list: list.getFilms())
     not GlobalList(this after $gl)
 end
