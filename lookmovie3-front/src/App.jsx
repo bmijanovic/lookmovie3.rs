@@ -8,6 +8,7 @@ import { BrowserRouter as Router } from "react-router-dom";
 import { Routes, Route } from "react-router-dom";
 import MoviesPage from "./Pages/MoviesPage";
 import ForYouPage from "./Pages/ForYouPage";
+import CreateMoviePage from "./Pages/CreateMoviePage";
 
 
 export const API_BASE_URL = "http://localhost:8080/api";
@@ -21,6 +22,8 @@ function App() {
 
           <Route path="movies" element={<MoviesPage />} />
           <Route path="for-you" element={<ForYouPage />} />
+          <Route path="create-movie" element={<CreateMoviePage />} />
+
 
 
 

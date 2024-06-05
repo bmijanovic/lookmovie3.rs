@@ -1,17 +1,16 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import BasicButton from "./BasicButton";
 import axios from "axios";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import IconButton from "@mui/material/IconButton";
 import { API_BASE_URL } from "../App";
 
 const NavbarComponent = ({ loggedUser }) => {
   const navigate = useNavigate();
+
   const handleLogout = async () => {
     axios
       .post(`${API_BASE_URL}/auth/logout`, {}, { withCredentials: true })
@@ -23,6 +22,7 @@ const NavbarComponent = ({ loggedUser }) => {
         console.log(error);
       });
   };
+
   const goHome = () => {
     navigate("/");
   };
@@ -39,16 +39,32 @@ const NavbarComponent = ({ loggedUser }) => {
           >
             Lookmovie3
           </Typography>
-          <Link to={"movies"} sx ={{color:'white'}}>
-            <Button color="inherit" sx={{ marginLeft: "10px" }}>
-              Home
-            </Button>
-          </Link>
-          <Link to={"for-you"}>
-            <Button color="inherit" sx={{ marginLeft: "10px" }}>
-              For You
-            </Button>
-          </Link>
+          
+          {loggedUser.role === "ROLE_USER" && (
+            <>
+              <Link to="/movies" style={{ textDecoration: 'none', color: 'white' }}>
+                <Button color="inherit" sx={{ marginLeft: "10px" }}>
+                  Home
+                </Button>
+              </Link>
+              <Link to="/for-you" style={{ textDecoration: 'none', color: 'white' }}>
+                <Button color="inherit" sx={{ marginLeft: "10px" }}>
+                  For You
+                </Button>
+              </Link>
+            </>
+          )}
+
+          {loggedUser.role === "ROLE_ADMIN" && (
+            <>
+              <Link to="/create-movie" style={{ textDecoration: 'none', color: 'white' }}>
+                <Button color="inherit" sx={{ marginLeft: "10px" }}>
+                  Create Movie
+                </Button>
+              </Link>
+              
+            </>
+          )}
 
           <Button
             color="inherit"

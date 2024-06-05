@@ -3,22 +3,24 @@ import BasicSelect from "./BasicSelect";
 import BasicInput from "./BasicInput";
 import BasicRadioButton from "./BasicRadioButton";
 import Dropzone from "react-dropzone";
-import { Box } from "@mui/material";
-import {Typography} from "@mui/material";
-
+import { Box, Typography } from "@mui/material";
 
 const FormComponent = ({ props, form, change }) => {
-  const [imageFile, setImageFile] = useState(null);
+  const [image, setImageBase64] = useState(null);
 
   useEffect(() => {}, [props, form]);
 
   const handleImageDrop = (acceptedFiles) => {
     const file = acceptedFiles[0];
-    const imageFiles = acceptedFiles.filter((file) =>
-      file.type.startsWith("image/")
-    );
-    setImageFile(imageFiles[0]);
-    change("imageFile", imageFiles[0]);
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      const base64String = reader.result;
+      setImageBase64(base64String);
+      change("image", base64String);
+    };
+
+    reader.readAsDataURL(file);
   };
 
   switch (props.item) {
@@ -30,6 +32,7 @@ const FormComponent = ({ props, form, change }) => {
           valueParam={props.valueParam}
           selected={form[props.itemValue]}
           nameParam={props.nameParam}
+          nameParam2={props.nameParam2}
           callback={(e) => change(props.itemValue, e.target.value)}
         />
       );
@@ -73,9 +76,9 @@ const FormComponent = ({ props, form, change }) => {
               }}
             >
               <input {...getInputProps()} />
-              {imageFile ? (
+              {image ? (
                 <img
-                  src={URL.createObjectURL(imageFile)}
+                  src={image}
                   alt="Uploaded Image"
                   style={{ width: "100%", height: "100%", objectFit: "cover" }}
                 />

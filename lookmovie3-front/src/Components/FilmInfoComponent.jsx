@@ -5,6 +5,7 @@ import axios from "axios";
 import { API_BASE_URL } from "../App";
 import InfoDialog from "./DialogComponent";
 import FilmCardComponent from "./FilmCardComponent";
+import ActorInfoComponent from "./ActorInfoComponent";
 
 const FilmInfoComponent = ({ film ,close }) => {
   const [rating, setRating] = useState(0);
@@ -205,7 +206,7 @@ const FilmInfoComponent = ({ film ,close }) => {
         open={actorDialogOpen}
         onClose={() => handleCloseActorDialog()}
         title={film.mainActor.name + " " + film.mainActor.surname}
-        content={<div/>}
+        content={<ActorInfoComponent actor={film.mainActor.name + " " + film.mainActor.surname}/>}
       ></InfoDialog>
       </Grid>
     </>

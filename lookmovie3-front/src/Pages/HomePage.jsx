@@ -13,16 +13,35 @@ import { Outlet } from "react-router-dom";
 
 const HomePage = () => {
   const navigate = useNavigate();
+  const [loggedUser, setLoggedUser] = useState(null);
+
 
   useEffect(() => {
-    navigate("/movies");
+    axios.get(`${API_BASE_URL}/auth/me`, {withCredentials: true})
+    .then((response) => {
+        console.log(response);
+        setLoggedUser(response.data);
+
+    })
+    .catch((error) => {
+        console.log(error);
+
+    });
+}, []);
+
+  useEffect(() => {
+    if (loggedUser != null && loggedUser.role === "ROLE_ADMIN") {
+      navigate("/admin");
+    } else if (loggedUser != null && loggedUser.role === "ROLE_USER") {
+      navigate("/movies");
+    }
   }, []);
 
  
 
   return (
     <div>
-      <NavbarComponent></NavbarComponent>
+      {loggedUser && <NavbarComponent loggedUser={loggedUser}></NavbarComponent>}
       <Outlet style={{ flex: 1, overflowY: "auto" }}></Outlet>
 
 
