@@ -46,7 +46,8 @@ public class Film {
     @Column(nullable = true , length = 20000)
     private String image;
 
-    private List<Awards> awards;
+    @Column(nullable = false)
+    private String award;
 
     @Override
     public String toString() {
@@ -59,7 +60,7 @@ public class Film {
                 ", mainActor=" + mainActor +
                 ", director=" + director +
                 ", description='" + description + '\'' +
-                ", awards=" + awards +
+                ", award=" + award +
                 '}';
     }
 

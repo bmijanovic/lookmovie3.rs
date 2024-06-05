@@ -13,6 +13,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/films")
 public class FilmController {
@@ -27,6 +30,11 @@ public class FilmController {
         Paginated<Film> films = filmService.getAllPaginated(pageParams);
 
         return ResponseEntity.ok(films);
+    }
+
+    @GetMapping("/main-actor-info/{actor}")
+    public ResponseEntity<HashMap<String, Integer>> getMainActorInfo(@PathVariable String actor) {
+        return ResponseEntity.ok(filmService.getMainActorInfo(actor));
     }
 
 }

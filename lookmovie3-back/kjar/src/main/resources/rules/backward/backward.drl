@@ -1,1 +1,55 @@
-package backward;
+package rules.backward;
+import com.ftn.sbnz.service.Entities.Models.BWItem;
+import com.ftn.sbnz.service.Entities.Models.BWUser;
+import java.util.HashMap;
+
+declare ActorAwards
+    @role(event)
+    awards: HashMap<String, Integer>
+end
+
+query hasAward(String left, String right)
+    BWItem(left, right;)
+    or
+    BWItem(x, right;) and hasAward(left, x;)
+end
+
+rule "bwuser inserted"
+    when
+        $bwuser: BWUser()
+    then
+        System.out.println("BWUser inserted");
+        insert(new ActorAwards(new HashMap<String, Integer>()));
+end
+
+rule "bwuser delete"
+salience -1
+    when
+        $bwuser: BWUser()
+    then
+        delete($bwuser);
+end
+
+
+rule "check awards for backward"
+    when
+        $bwuser: BWUser($user: user)
+        $map: ActorAwards($awards: awards)
+        hasAward($user, award;)
+    then
+        if(award.equals(award.toUpperCase()))
+        {
+            if ($awards.containsKey(award)) {
+                $awards.put(award, (Integer)$awards.get(award) + 1);
+            } else {
+                $awards.put(award, 1);
+            }
+        }
+
+end
+
+
+query getAwards
+    $aa: ActorAwards($awards: awards)
+    not ActorAwards(this after $aa)
+end
