@@ -9,13 +9,17 @@ import Button from '@mui/material/Button';
 import { API_BASE_URL } from "../App";
 import axios from "axios";
 import { Card, CardContent, CardActions } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 const loginTemplate = [
     {
         item: "BasicInput",
         label: "E-mail",
         itemValue: "email"
+    },
+    {
+        item: "BasicInput",
+        label: "Name",
+        itemValue: "name"
     },
     {
         item: "BasicInput",
@@ -25,7 +29,7 @@ const loginTemplate = [
     }
 ];
 
-const LoginComponent = () => {
+const RegisterPage = () => {
     const navigate = useNavigate();
     const [userCredentials, setUserCredentials] = useState({});
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -50,16 +54,21 @@ const LoginComponent = () => {
     }, [userCredentials]);
 
     const handleCloseDialog = () => {
+
         setDialogOpen(false);
+        navigate("/login");
+
     };
 
     const handleSubmit = async (state) => {
         setUserCredentials(state);
-        axios.post(`${API_BASE_URL}/auth/login`, state, {
+        axios.post(`${API_BASE_URL}/auth/register`, state, {
             withCredentials: true,
         }).then((response) => {
             console.log(response);
-            navigate("/");
+            setDialogTitle("Success");
+            setDialogContent("You have successfully registered. Please login to continue.");
+            setDialogOpen(true);
         }).catch((error) => {
             console.log(error);
         });
@@ -67,21 +76,21 @@ const LoginComponent = () => {
 
     return (
         <div>
-            <Card sx={{ maxWidth: 400,margin: "0 auto", marginTop:'50px', padding: "10px", backgroundColor: "#333", color: "white" }}>
-                <CardContent>
-                    <BasicForm label="Lookmovie3.rs" buttonName = "Login" template={loginTemplate} callback={handleSubmit} />
-                    <Link to="/register" style={{ textDecoration: 'none', color: 'white' ,display:'flex',justifyContent:'center',alignItems:'center'}} >
+            <Card sx={{ maxWidth: 400, margin: "0 auto",marginTop:'50px', padding: "10px", backgroundColor: "#333", color: "white" }}>
+                <CardContent >
+                    <BasicForm label="Lookmovie3.rs" buttonName = "Register" template={loginTemplate} callback={handleSubmit} />
+                    <Link to="/login" style={{ textDecoration: 'none', color: 'white' ,display:'flex',justifyContent:'center',alignItems:'center'}} >
                         <Button color="inherit" sx={{fontSize:'small', marginTop:"10px"}}>
-                             New here? Register
+                             Already have an account? Login
                         </Button>
                     </Link>
                 </CardContent>
                 
             </Card>
-            <Dialog open={dialogOpen} onClose={handleCloseDialog}>
-                <DialogTitle>{dialogTitle}</DialogTitle>
-                <DialogContent>{dialogContent}</DialogContent>
-                <DialogActions>
+            <Dialog open={dialogOpen} onClose={handleCloseDialog} >
+                <DialogTitle sx = {{backgroundColor:'#333'}}>{dialogTitle}</DialogTitle>
+                <DialogContent sx = {{backgroundColor:'#333'}}>{dialogContent}</DialogContent>
+                <DialogActions sx = {{backgroundColor:'#333'}}>
                     <Button onClick={handleCloseDialog} color="primary">
                         Close
                     </Button>
@@ -91,4 +100,4 @@ const LoginComponent = () => {
     );
 };
 
-export default LoginComponent;
+export default RegisterPage;

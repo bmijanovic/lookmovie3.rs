@@ -10,6 +10,7 @@ import MoviesPage from "./Pages/MoviesPage";
 import ForYouPage from "./Pages/ForYouPage";
 import CreateMoviePage from "./Pages/CreateMoviePage";
 import ProfilePage from "./Pages/ProfilePage";
+import RegisterPage from "./Pages/RegisterPage";
 
 
 export const API_BASE_URL = "http://localhost:8080/api";
@@ -32,6 +33,8 @@ function App() {
 
           </Route>
           <Route path="/login" element={<LoginComponent />} />
+          <Route path="/register" element={<RegisterPage />} />
+
         </Routes>
 
         <Container sx={{ height: "100%" }}>

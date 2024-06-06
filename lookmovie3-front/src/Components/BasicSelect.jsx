@@ -24,7 +24,7 @@ const BasicSelect = ({
       }}
     >
       <Select
-        sx={{ marginTop: "20px", backgroundColor: "#333"}}
+        sx={{backgroundColor: "#333"}}
         style={{ width: "200px" ,backgroundColor: "#333" }}
         id={label + "-select"}
         key={label + "-select"}

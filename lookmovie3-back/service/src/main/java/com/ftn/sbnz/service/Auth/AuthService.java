@@ -1,5 +1,6 @@
 package com.ftn.sbnz.service.Auth;
 
+import com.ftn.sbnz.service.Controllers.DTOs.CreateUserDTO;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -11,7 +12,9 @@ import com.ftn.sbnz.service.Repositories.RoleRepository;
 import com.ftn.sbnz.service.Repositories.UserRepository;
 import com.ftn.sbnz.service.Security.CustomAuthenticationToken;
 import com.ftn.sbnz.service.Security.TokenProvider;
+import org.kie.api.runtime.KieSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,6 +32,10 @@ public class AuthService {
 
 	@Autowired
 	private TokenProvider tokenProvider;
+
+	@Qualifier("kieSession")
+	@Autowired
+	private KieSession kieSession;
 
 	@Autowired
 	private UserRepository userRepository;
@@ -88,4 +95,11 @@ public class AuthService {
 	}
 
 
+    public User register(CreateUserDTO register) {
+		User user = new User(register.getName(), register.getEmail(), passwordEncoder.encode(register.getPassword()));
+		user.getRoles().add(roleRepository.findByName("ROLE_USER").get());
+		kieSession.insert(user);
+		return userRepository.save(user);
+
+    }
 }

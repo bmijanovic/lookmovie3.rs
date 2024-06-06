@@ -19,6 +19,30 @@ const CreateMoviePage = () => {
       itemValue: "name",
     },
     {
+      item: "BasicSelect",
+      label: "Actors",
+      selected: selectedActors,
+      collection: actors,
+      valueParam: "id",
+      nameParam: "name",
+      nameParam2: "surname",
+
+      itemValue: "mainActorId",
+
+    },
+    {
+        item: "BasicSelect",
+        label: "Directors",
+        selected: selectedDirectors,
+        collection: directors,
+        valueParam: "id",
+        nameParam: "name",
+        nameParam2: "surname",
+        itemValue: "directorId",
+  
+      },
+    
+    {
       item: "BasicInput",
       label: "Genre",
       itemValue: "genre",
@@ -45,29 +69,7 @@ const CreateMoviePage = () => {
       label: "Description",
       itemValue: "description",
     },
-    {
-      item: "BasicSelect",
-      label: "Actors",
-      selected: selectedActors,
-      collection: actors,
-      valueParam: "id",
-      nameParam: "name",
-      nameParam2: "surname",
-
-      itemValue: "mainActorId",
-
-    },
-    {
-        item: "BasicSelect",
-        label: "Directors",
-        selected: selectedDirectors,
-        collection: directors,
-        valueParam: "id",
-        nameParam: "name",
-        nameParam2: "surname",
-        itemValue: "directorId",
-  
-      },
+    
   ];
 
   useEffect(() => {
@@ -109,7 +111,7 @@ const CreateMoviePage = () => {
   return (
     <div>
       <BasicForm
-        style={{ width: "70%" }}
+        style={{ width: "100%" }}
         template={t}
         callback={test}
         buttonName={"Create Movie"}

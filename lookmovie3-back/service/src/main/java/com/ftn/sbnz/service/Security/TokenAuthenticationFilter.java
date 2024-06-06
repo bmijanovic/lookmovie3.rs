@@ -40,7 +40,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 		System.out.println(request.getRequestURI());
-		if (request.getRequestURI().equals("/api/auth/login") || request.getRequestURI().contains("swagger") || request.getRequestURI().contains("/api-doc")) {
+		if (request.getRequestURI().equals("/api/auth/login") ||request.getRequestURI().equals("/api/auth/register") || request.getRequestURI().contains("swagger") || request.getRequestURI().contains("/api-doc")) {
 			filterChain.doFilter(request, response);
 			return;
 		}

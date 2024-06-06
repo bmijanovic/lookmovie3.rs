@@ -149,6 +149,25 @@ public class User implements UserDetails{
 				+ ", password=" + password + ", deleted=" + deleted + ", emailVerified=" + emailVerified + ", roles="
 				+ roles + ", recommendation: " + gotRecommendation + "]";
 	}
+	public User(String name, String email, String password) {
+		this.id = UUID.randomUUID();
+		this.name = name;
+		this.email = email;
+		this.password = password;
+		this.roles = new ArrayList<>();
+		this.likedFilms = new ArrayList<>();
+		this.watchedFilms = new ArrayList<>();
+		this.likedDirectors = new ArrayList<>();
+		this.likedActors = new ArrayList<>();
+		this.wishlist = new ArrayList<>();
+		this.recommendedFilms = new ArrayList<>();
+		this.gotRecommendation = false;
+		this.emailVerified = true;
+		this.loginAttempts = 0;
+
+
+	}
+
 
 	public User update(User user) {
 		this.name = user.getName();

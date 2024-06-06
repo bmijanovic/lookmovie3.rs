@@ -8,6 +8,7 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import { API_BASE_URL } from "../App";
 
+
 const NavbarComponent = ({ loggedUser }) => {
   const navigate = useNavigate();
 
@@ -70,6 +71,9 @@ const NavbarComponent = ({ loggedUser }) => {
               
             </>
           )}
+          {loggedUser != null &&(<Typography sx={{ position: "absolute", marginRight: "120px", right: 0 }}>
+            {loggedUser.name}
+          </Typography>)}
 
           <Button
             color="inherit"

@@ -1,6 +1,7 @@
 package com.ftn.sbnz.service.Auth;
 
 
+import com.ftn.sbnz.service.Controllers.DTOs.CreateUserDTO;
 import com.ftn.sbnz.service.Controllers.DTOs.UserDTO;
 import com.ftn.sbnz.service.Entities.Models.User;
 import com.ftn.sbnz.service.Auth.DTOs.LoginRequest;
@@ -28,12 +29,19 @@ public class AuthController {
         return authService.login(loginRequest, response);
     }
 
+    @PostMapping("/register")
+    public ResponseEntity<User> register(@RequestBody CreateUserDTO register,HttpServletResponse response) {
+        User user = authService.register(register);
+        return ResponseEntity.ok(user);
+    }
+
     @PostMapping("/logout")
 	public ResponseEntity<String> logout(Authentication authentication, HttpServletRequest request, HttpServletResponse response) {
 		User user = (User) authentication.getPrincipal();
 		authService.logout(user, request, response);
 		return ResponseEntity.ok("Logged out");
 	}
+
 
     @GetMapping("/me")
      public UserDTO me(Authentication authentication, HttpServletRequest request) {
