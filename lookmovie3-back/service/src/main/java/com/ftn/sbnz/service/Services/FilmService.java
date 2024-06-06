@@ -1,10 +1,7 @@
 package com.ftn.sbnz.service.Services;
 
 import com.ftn.sbnz.service.Controllers.DTOs.CreateFilmDTO;
-import com.ftn.sbnz.service.Entities.Models.Actor;
-import com.ftn.sbnz.service.Entities.Models.BWUser;
-import com.ftn.sbnz.service.Entities.Models.Director;
-import com.ftn.sbnz.service.Entities.Models.Film;
+import com.ftn.sbnz.service.Entities.Models.*;
 import com.ftn.sbnz.service.Entities.Tools.PageParams;
 import com.ftn.sbnz.service.Entities.Tools.Paginated;
 import com.ftn.sbnz.service.Repositories.ActorRepository;
@@ -28,6 +25,8 @@ import java.util.UUID;
 @Service
 
 public class FilmService {
+
+
     @Autowired
     private FilmRepository filmRepository;
     @Qualifier("kieSession")
@@ -90,7 +89,16 @@ public class FilmService {
         newFilm.setName(film.getName());
         newFilm.setYear(film.getYear());
         newFilm.setId(UUID.randomUUID());
+
+        kieSession.insert(newFilm);
+        if(!newFilm.getAward().isEmpty()) {
+            BWItem bwItem = new BWItem(newFilm.getName(), newFilm.getAward());
+            kieSession.insert(bwItem);
+            BWItem bwItem2 = new BWItem(newFilm.getMainActor().getName() + " " + newFilm.getMainActor().getSurname(), newFilm.getName());
+            kieSession.insert(bwItem2);
+        }
         return filmRepository.save(newFilm);
+
 
 
     }
