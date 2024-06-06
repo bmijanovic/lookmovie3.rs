@@ -1,0 +1,89 @@
+package rules.forward;
+dialect  "mvel"
+
+import com.ftn.sbnz.service.Entities.Events.FilmReview;
+import com.ftn.sbnz.service.Entities.Models.User;
+import com.ftn.sbnz.service.Entities.Models.Film;
+import com.ftn.sbnz.service.Entities.Models.Actor;
+import com.ftn.sbnz.service.Entities.Models.Global;
+
+
+declare Recommendation
+    @role(event)
+end
+
+declare Recommendation
+    film : Film
+    userId : UUID
+end
+
+
+rule "hello FilmReview"
+no-loop
+when
+    $filmReview : FilmReview(isDone == false)
+then
+    System.out.println("FilmReview inserted");
+end
+
+rule "positive review"
+no-loop
+when
+    $global: Global()
+    eval($global.getEvent().equals("review"))
+    $filmReview : FilmReview($film : film, isPositive == true, isDone == false)
+    $user : User(id == $global.getUserId())
+then
+    System.out.println("positive review for film " + $film.getName() + " by user " + $user.getUsername());
+    modify($global){
+        setFilm($film);
+    }
+    modify($user) {
+        getLikedFilms().add($film);
+    }
+    modify($user){
+        setGotRecommendation(false);
+    }
+    modify($filmReview) {
+        setIsDone(true);
+    }
+end
+
+
+rule "film added to liked films for actor"
+no-loop
+when
+    $global: Global()
+    eval($global.getEvent().equals("review"))
+    $user : User(id == $global.getUserId(), $likedFilms : likedFilms, gotRecommendation == false)
+    eval($likedFilms.size() > 0)
+    $film : Film($actor: mainActor) from $likedFilms.get($likedFilms.size() - 1)
+then
+    System.out.println("    Film " + $film.getName() + " " + $film.getId() + " added to liked films by user " + $user.getUsername());
+    System.out.println("    Film " + $global.getFilm().getName() + " " + $global.getFilm().getId() + " IS LIKED FILM");
+    modify($user) {
+        getLikedActors().add($actor);
+    }
+end
+
+
+rule "actor added to liked actors"
+no-loop
+//agenda-group "review"
+when
+    $global: Global()
+    eval($global.getEvent().equals("review"))
+    $user : User(id == $global.getUserId() , $likedActors : likedActors, gotRecommendation == false)
+    eval($likedActors.size() > 0)
+    $actor : Actor() from $likedActors.get($likedActors.size() - 1)
+    $film : Film(mainActor.getId() == $actor.getId(), id != $global.getFilm().getId())
+    not(Recommendation(film == $film, userId == $global.getUserId()))
+then
+    System.out.println("        Actor " + $actor.getName() + " added to liked actors by user " + $user.getUsername());
+    System.out.println("        Recommended mmmmmmmmm: " + $film.getName());
+    modify($user) {
+        setGotRecommendation(true);
+    }
+    insert(new Recommendation($film, $global.getUserId()));
+    delete($global);
+end

@@ -1,0 +1,100 @@
+package rules.forward;
+
+
+import com.ftn.sbnz.service.Entities.Events.FilmRating;
+import com.ftn.sbnz.service.Entities.Models.User;
+import com.ftn.sbnz.service.Entities.Models.Film;
+import com.ftn.sbnz.service.Entities.Models.FilmGenre;
+import com.ftn.sbnz.service.Entities.Models.Global;
+import java.util.UUID;
+
+
+
+declare Recommendation
+    @role(event)
+end
+
+declare Recommendation
+    film : Film
+    userId : UUID
+end
+
+
+rule "hello FilmRating"
+no-loop
+when
+    $filmRating : FilmRating(isDone == false)
+then
+    System.out.println("FilmRating inserted");
+end
+
+rule "5 star rating"
+no-loop
+when
+    $global: Global()
+    eval($global.getEvent().equals("rating"))
+    $filmRating : FilmRating(rating == 5, $film : film, isDone == false)
+    $user : User(id == $global.getUserId())
+then
+    System.out.println("5 star rating for film " + $film.getName() + " by user " + $user.getUsername());
+    modify($global){
+        setFilm($film);
+    }
+    modify($user) {
+        getLikedFilms().add($film);
+    }
+    modify($user){
+        setGotRecommendation(false);
+    }
+    modify($filmRating) {
+        setIsDone(true);
+    }
+end
+
+rule "film added to liked films"
+no-loop
+when
+    $global: Global()
+    eval($global.getEvent().equals("rating"))
+    $user : User(id == $global.getUserId(), $likedFilms : likedFilms, gotRecommendation == false)
+    eval($likedFilms.size() > 0)
+    $film : Film() from $likedFilms.get($likedFilms.size() - 1)
+then
+    System.out.println("    Film " + $film.getName() + " " + $film.getId() + " added to liked films by user " + $user.getUsername());
+    modify($user) {
+        getLikedGenres().add($film.getGenre());
+    }
+end
+
+
+rule "genre added to liked genres"
+no-loop
+when
+    $global: Global()
+    eval($global.getEvent().equals("rating"))
+    $user : User(id == $global.getUserId() , $likedGenres : likedGenres, gotRecommendation == false)
+    eval($likedGenres.size() > 0)
+    $genre : String() from $likedGenres.get($likedGenres.size() - 1)
+    $film : Film(genre == $genre,  id != $global.getFilm().getId())
+    not(Recommendation(film == $film, userId == $global.getUserId()))
+then
+    System.out.println("    Genre " + $genre + " added to liked genres by user " + $user.getUsername());
+    System.out.println("    Recommended mmmmmmmmm: " + $film.getName());
+    modify($user) {
+        setGotRecommendation(true);
+    }
+    insert(new Recommendation($film, $global.getUserId()));
+    delete($global);
+end
+
+
+query getUserById(UUID userId)
+    $user : User(id == userId)
+end
+
+
+query getLastUserRecommendation(UUID userId)
+    $recommendation : Recommendation(userId == userId, $film : film)
+    not Recommendation(userId == userId, this after $recommendation)
+end
+
