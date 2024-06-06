@@ -4,10 +4,10 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import NavbarComponent from "../Components/NavbarComponent";
 import BasicPagination from "../Components/BasicPagination";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
 import FilmCardComponent from "../Components/FilmCardComponent";
-
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
 
 const MoviesPage = () => {
   const navigate = useNavigate();
@@ -42,6 +42,15 @@ const MoviesPage = () => {
     });
   };
 
+  const handleSearchChange = (event) => {
+    setSearch(event.target.value);
+  };
+
+  const handleSearchSubmit = () => {
+    setPagination({ ...pagination, pageNumber: 1 }); // Reset to first page on new search
+    fetchFilms();
+  };
+
   const fetchFilms = () => {
     console.log("Page:", pagination.pageNumber);
     axios
@@ -65,7 +74,24 @@ const MoviesPage = () => {
 
   return (
     <div>
-        
+      <Box display="flex" justifyContent="center" mb={2} mt={2}>
+        <TextField
+          label="Search Films"
+          variant="outlined"
+          value={search}
+          onChange={handleSearchChange}
+          onKeyPress={(event) => {
+            if (event.key === 'Enter') {
+              handleSearchSubmit();
+            }
+          }}
+          style={{ marginRight: 8 }}
+        />
+        <Button variant="contained" onClick={handleSearchSubmit}>
+          Search
+        </Button>
+      </Box>
+
       <BasicPagination
         currentPage={pagination.pageNumber}
         pageSize={pagination.pageSize}
@@ -81,7 +107,7 @@ const MoviesPage = () => {
         }}
       >
         {films.map((film) => (
-          <FilmCardComponent film={film}  />
+          <FilmCardComponent key={film.id} film={film} />
         ))}
       </div>
     </div>

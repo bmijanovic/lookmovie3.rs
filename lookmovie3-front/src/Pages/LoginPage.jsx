@@ -59,7 +59,7 @@ const LoginComponent = () => {
             withCredentials: true,
         }).then((response) => {
             console.log(response);
-            navigate("/");
+            navigate("/movies");
         }).catch((error) => {
             console.log(error);
         });

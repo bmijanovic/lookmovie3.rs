@@ -33,15 +33,13 @@ const NavbarComponent = ({ loggedUser }) => {
       <AppBar position="static">
         <Toolbar>
           <Typography
-            onClick={goHome}
-            variant="h5"
+            variant="h4"
             component="div"
-            sx={{ cursor: "pointer" }}
           >
             Lookmovie3
           </Typography>
           
-          {loggedUser.role === "ROLE_USER" && (
+          {loggedUser && (
             <>
               <Link to="/movies" style={{ textDecoration: 'none', color: 'white' }}>
                 <Button color="inherit" sx={{ marginLeft: "10px" }}>
