@@ -21,13 +21,7 @@ public class ReportService {
         for (QueryResultsRow row : results) {
             genresMap = (HashMap<String, Integer>) row.get("$map");
         }
-        if(genresMap == null) {
-            genresMap = new HashMap<String, Integer>();
-        }
-        if (!genresMap.isEmpty()) {
-            return genresMap;
-        }
-        return null;
+        return genresMap;
     }
 
     public HashMap<String, Integer> usersFavouriteFilms(User user) {
@@ -36,13 +30,7 @@ public class ReportService {
         for (QueryResultsRow row : results) {
             genresMap = (HashMap<String, Integer>) row.get("$map");
         }
-        if(genresMap == null) {
-            genresMap = new HashMap<String, Integer>();
-        }
-        if (!genresMap.isEmpty()) {
-            return genresMap;
-        }
-        return null;
+        return genresMap;
     }
 
     public HashMap<String, Integer> usersFavouriteDirectors(User user) {
@@ -51,13 +39,7 @@ public class ReportService {
         for (QueryResultsRow row : results) {
             genresMap = (HashMap<String, Integer>) row.get("$map");
         }
-        if(genresMap == null) {
-            genresMap = new HashMap<String, Integer>();
-        }
-        if (!genresMap.isEmpty()) {
-            return genresMap;
-        }
-        return null;
+        return genresMap;
     }
     public HashMap<String, Integer> usersFavouriteActors(User user) {
         QueryResults results = kieSession.getQueryResults("usersFavouriteActors", user.getId());
@@ -65,13 +47,7 @@ public class ReportService {
         for (QueryResultsRow row : results) {
             genresMap = (HashMap<String, Integer>) row.get("$map");
         }
-        if(genresMap == null) {
-            genresMap = new HashMap<String, Integer>();
-        }
-        if (!genresMap.isEmpty()) {
-            return genresMap;
-        }
-        return null;
+        return genresMap;
     }
 
 
@@ -82,13 +58,8 @@ public class ReportService {
         for (QueryResultsRow row : results) {
             genresMap = (HashMap<Integer, Integer>) row.get("$map");
         }
-        if(genresMap == null) {
-            genresMap = new HashMap<Integer, Integer>();
-        }
-        if (!genresMap.isEmpty()) {
-            return genresMap;
-        }
-        return null;
+
+        return genresMap;
     }
 
     public HashMap<String, Double> usersFavouriteFilmsRating(User user) {
@@ -97,12 +68,7 @@ public class ReportService {
         for (QueryResultsRow row : results) {
             genresMap = (HashMap<String, Double>) row.get("$map");
         }
-        if(genresMap == null) {
-            genresMap = new HashMap<String, Double>();
-        }
-        if (!genresMap.isEmpty()) {
-            return genresMap;
-        }
-        return null;
+
+        return genresMap;
     }
 }
