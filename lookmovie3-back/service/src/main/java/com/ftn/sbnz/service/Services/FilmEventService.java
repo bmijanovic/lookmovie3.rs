@@ -64,7 +64,7 @@ public class FilmEventService {
         filmReview.setIsDone(false);
         filmReviewRepository.save(filmReview);
 
-        kieSession.insert(new Global(user.getId(), film));
+        kieSession.insert(new Global(user.getId(), film, "review"));
         kieSession.insert(filmReview);
         kieSession.insert(new Genre(film.getGenre()));
 
@@ -106,7 +106,7 @@ public class FilmEventService {
         filmRating.setIsDone(false);
         filmRatingRepository.save(filmRating);
 
-        kieSession.insert(new Global(user.getId(), film));
+        kieSession.insert(new Global(user.getId(), film, "rating"));
         kieSession.insert(new Genre(film.getGenre()));
 
         kieSession.insert(filmRating);
@@ -147,7 +147,7 @@ public class FilmEventService {
         filmWishlist.setIsDone(false);
         filmWishlistRepository.save(filmWishlist);
 
-        kieSession.insert(new Global(user.getId(), film));
+        kieSession.insert(new Global(user.getId(), film, "wishlist"));
         kieSession.insert(filmWishlist);
         kieSession.insert(new Genre(film.getGenre()));
 
@@ -196,7 +196,7 @@ public class FilmEventService {
         filmWatch.setTimestamp(Date.from(Instant.now()));
 
         filmWatchRepository.save(filmWatch);
-        kieSession.insert(new Global(user.getId(), film));
+        kieSession.insert(new Global(user.getId(), film, "watch"));
         kieSession.insert(filmWatch);
         kieSession.insert(new Genre(film.getGenre()));
 

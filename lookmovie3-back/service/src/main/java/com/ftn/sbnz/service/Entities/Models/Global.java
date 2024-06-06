@@ -12,4 +12,5 @@ import java.util.UUID;
 public class Global {
     private UUID userId;
     private Film film;
+    private String event;
 }

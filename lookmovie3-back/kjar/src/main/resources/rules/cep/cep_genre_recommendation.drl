@@ -73,6 +73,7 @@ then
         delete(gr);
     }
     insert(new MakeList(new ArrayList(), $genre.getGenre(), $global.getUserId()));
+    System.out.println("Make list for user: " + $global.getUserId());
 
 end
 
@@ -111,9 +112,9 @@ then
     }
 end
 
-query getMakeList(UUID userId)
-    $makeList: MakeList($userId : userId, $list : list)
-    not MakeList(userId == $userId, this after $makeList)
+query getMakeList(UUID id)
+    $makeList: MakeList(userId == id, $list : list)
+    not MakeList(userId == id, this after $makeList)
 end
 
 

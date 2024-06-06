@@ -20,7 +20,6 @@ end
 
 rule "hello FilmReview"
 no-loop
-//agenda-group "review"
 when
     $filmReview : FilmReview(isDone == false)
 then
@@ -29,9 +28,9 @@ end
 
 rule "positive review"
 no-loop
-//agenda-group "review"
 when
     $global: Global()
+    eval($global.getEvent().equals("review"))
     $filmReview : FilmReview($film : film, isPositive == true, isDone == false)
     $user : User(id == $global.getUserId())
 then
@@ -53,9 +52,9 @@ end
 
 rule "film added to liked films for actor"
 no-loop
-//agenda-group "review"
 when
     $global: Global()
+    eval($global.getEvent().equals("review"))
     $user : User(id == $global.getUserId(), $likedFilms : likedFilms, gotRecommendation == false)
     eval($likedFilms.size() > 0)
     $film : Film($actor: mainActor) from $likedFilms.get($likedFilms.size() - 1)
@@ -73,6 +72,7 @@ no-loop
 //agenda-group "review"
 when
     $global: Global()
+    eval($global.getEvent().equals("review"))
     $user : User(id == $global.getUserId() , $likedActors : likedActors, gotRecommendation == false)
     eval($likedActors.size() > 0)
     $actor : Actor() from $likedActors.get($likedActors.size() - 1)
