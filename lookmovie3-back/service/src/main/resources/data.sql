@@ -1,7 +1,24 @@
 INSERT INTO USERS(ID, EMAIL, NAME, PASSWORD, EMAIL_VERIFIED, LOGIN_ATTEMPTS, DELETED, LIKED_GENRES, GOT_RECOMMENDATION) VALUES
     ('e3661c31-d1a4-47ab-94b6-1c6500dccf25', 'ognjen@gmail.com', 'Ognjen Radovanovic', '$2y$10$uaQTp4iF5tJoC.R4kCzWOuWB0zNveArf/oKXDvnSs81Z563fPAmZ6', true, 0, false, '{}'::smallint[],false),
     ('e3661c31-d1a4-47ab-94b6-1c6500dccf24', 'bojan@gmail.com', 'Bojan Mijanovic', '$2y$10$C836IyKmo1L08tOzYm8r9.CCW6CjnClul764C1E9DP9aqnO8LOl5G', true, 0, false, '{}'::smallint[],false),
-    ('e3661c31-d1a4-47ab-94b6-1c6500dccf23', 'admin@gmail.com', 'Admin Adminovic', '$2y$10$C836IyKmo1L08tOzYm8r9.CCW6CjnClul764C1E9DP9aqnO8LOl5G', true, 0, false, '{}'::smallint[],false);
+    ('e3661c31-d1a4-47ab-94b6-1c6500dccf23', 'admin@gmail.com', 'Admin Adminovic', '$2y$10$C836IyKmo1L08tOzYm8r9.CCW6CjnClul764C1E9DP9aqnO8LOl5G', true, 0, false, '{}'::smallint[],false),
+    ('e3661c31-d1a4-47ab-94b6-1c6500dccf22', 'user1@gmail.com', 'Korisnik1 Korisnikovic', '$2y$10$AWSrSVMKhoEUX6WwVdAN2ex/LZYXSqmnKpfPDCRven1wkGgTrxZ3m', true, 0, false, '{}'::smallint[],false),
+    ('e3661c31-d1a4-47ab-94b6-1c6500dccf21', 'user2@gmail.com', 'Korisnik2 Korisnikovic', '$2y$10$AWSrSVMKhoEUX6WwVdAN2ex/LZYXSqmnKpfPDCRven1wkGgTrxZ3m', true, 0, false, '{}'::smallint[],false),
+    ('e3661c31-d1a4-47ab-94b6-1c6500dccf20', 'user3@gmail.com', 'Korisnik3 Korisnikovic', '$2y$10$AWSrSVMKhoEUX6WwVdAN2ex/LZYXSqmnKpfPDCRven1wkGgTrxZ3m', true, 0, false, '{}'::smallint[],false),
+    ('e3661c31-d1a4-47ab-94b6-1c6500dccf19', 'user4@gmail.com', 'Korisnik4 Korisnikovic', '$2y$10$AWSrSVMKhoEUX6WwVdAN2ex/LZYXSqmnKpfPDCRven1wkGgTrxZ3m', true, 0, false, '{}'::smallint[],false),
+    ('e3661c31-d1a4-47ab-94b6-1c6500dccf18', 'user5@gmail.com', 'Korisnik5 Korisnikovic', '$2y$10$AWSrSVMKhoEUX6WwVdAN2ex/LZYXSqmnKpfPDCRven1wkGgTrxZ3m', true, 0, false, '{}'::smallint[],false),
+    ('e3661c31-d1a4-47ab-94b6-1c6500dccf17', 'user6@gmail.com', 'Korisnik6 Korisnikovic', '$2y$10$AWSrSVMKhoEUX6WwVdAN2ex/LZYXSqmnKpfPDCRven1wkGgTrxZ3m', true, 0, false, '{}'::smallint[],false),
+    ('e3661c31-d1a4-47ab-94b6-1c6500dccf16', 'user7@gmail.com', 'Korisnik7 Korisnikovic', '$2y$10$AWSrSVMKhoEUX6WwVdAN2ex/LZYXSqmnKpfPDCRven1wkGgTrxZ3m', true, 0, false, '{}'::smallint[],false),
+    ('e3661c31-d1a4-47ab-94b6-1c6500dccf15', 'user8@gmail.com', 'Korisnik8 Korisnikovic', '$2y$10$AWSrSVMKhoEUX6WwVdAN2ex/LZYXSqmnKpfPDCRven1wkGgTrxZ3m', true, 0, false, '{}'::smallint[],false),
+    ('e3661c31-d1a4-47ab-94b6-1c6500dccf14', 'user9@gmail.com', 'Korisnik9 Korisnikovic', '$2y$10$AWSrSVMKhoEUX6WwVdAN2ex/LZYXSqmnKpfPDCRven1wkGgTrxZ3m', true, 0, false, '{}'::smallint[],false),
+    ('e3661c31-d1a4-47ab-94b6-1c6500dccf13', 'user10@gmail.com', 'Korisnik10 Korisnikovic', '$2y$10$AWSrSVMKhoEUX6WwVdAN2ex/LZYXSqmnKpfPDCRven1wkGgTrxZ3m', true, 0, false, '{}'::smallint[],false),
+    ('e3661c31-d1a4-47ab-94b6-1c6500dccf12', 'user11@gmail.com', 'Korisnik11 Korisnikovic', '$2y$10$AWSrSVMKhoEUX6WwVdAN2ex/LZYXSqmnKpfPDCRven1wkGgTrxZ3m', true, 0, false, '{}'::smallint[],false),
+    ('e3661c31-d1a4-47ab-94b6-1c6500dccf11', 'user12@gmail.com', 'Korisnik12 Korisnikovic', '$2y$10$AWSrSVMKhoEUX6WwVdAN2ex/LZYXSqmnKpfPDCRven1wkGgTrxZ3m', true, 0, false, '{}'::smallint[],false),
+    ('e3661c31-d1a4-47ab-94b6-1c6500dccf10', 'user13@gmail.com', 'Korisnik13 Korisnikovic', '$2y$10$AWSrSVMKhoEUX6WwVdAN2ex/LZYXSqmnKpfPDCRven1wkGgTrxZ3m', true, 0, false, '{}'::smallint[],false),
+    ('e3661c31-d1a4-47ab-94b6-1c6500dccf09', 'user14@gmail.com', 'Korisnik14 Korisnikovic', '$2y$10$AWSrSVMKhoEUX6WwVdAN2ex/LZYXSqmnKpfPDCRven1wkGgTrxZ3m', true, 0, false, '{}'::smallint[],false),
+    ('e3661c31-d1a4-47ab-94b6-1c6500dccf08', 'user15@gmail.com', 'Korisnik15 Korisnikovic', '$2y$10$AWSrSVMKhoEUX6WwVdAN2ex/LZYXSqmnKpfPDCRven1wkGgTrxZ3m', true, 0, false, '{}'::smallint[],false),
+    ('e3661c31-d1a4-47ab-94b6-1c6500dccf07', 'user16@gmail.com', 'Korisnik16 Korisnikovic', '$2y$10$AWSrSVMKhoEUX6WwVdAN2ex/LZYXSqmnKpfPDCRven1wkGgTrxZ3m', true, 0, false, '{}'::smallint[],false),
+    ('e3661c31-d1a4-47ab-94b6-1c6500dccf06', 'user17@gmail.com', 'Korisnik17 Korisnikovic', '$2y$10$AWSrSVMKhoEUX6WwVdAN2ex/LZYXSqmnKpfPDCRven1wkGgTrxZ3m', true, 0, false, '{}'::smallint[],false);
 
 
 
@@ -11,6 +28,23 @@ INSERT INTO ROLE (name) VALUES ('ROLE_USER');
 INSERT INTO USER_ROLE (user_id, role_id) VALUES ('e3661c31-d1a4-47ab-94b6-1c6500dccf25', 2);
 INSERT INTO USER_ROLE (user_id, role_id) VALUES ('e3661c31-d1a4-47ab-94b6-1c6500dccf24', 2);
 INSERT INTO USER_ROLE (user_id, role_id) VALUES ('e3661c31-d1a4-47ab-94b6-1c6500dccf23', 1);
+INSERT INTO USER_ROLE (user_id, role_id) VALUES ('e3661c31-d1a4-47ab-94b6-1c6500dccf22', 2);
+INSERT INTO USER_ROLE (user_id, role_id) VALUES ('e3661c31-d1a4-47ab-94b6-1c6500dccf21', 2);
+INSERT INTO USER_ROLE (user_id, role_id) VALUES ('e3661c31-d1a4-47ab-94b6-1c6500dccf20', 2);
+INSERT INTO USER_ROLE (user_id, role_id) VALUES ('e3661c31-d1a4-47ab-94b6-1c6500dccf19', 2);
+INSERT INTO USER_ROLE (user_id, role_id) VALUES ('e3661c31-d1a4-47ab-94b6-1c6500dccf18', 2);
+INSERT INTO USER_ROLE (user_id, role_id) VALUES ('e3661c31-d1a4-47ab-94b6-1c6500dccf17', 2);
+INSERT INTO USER_ROLE (user_id, role_id) VALUES ('e3661c31-d1a4-47ab-94b6-1c6500dccf16', 2);
+INSERT INTO USER_ROLE (user_id, role_id) VALUES ('e3661c31-d1a4-47ab-94b6-1c6500dccf15', 2);
+INSERT INTO USER_ROLE (user_id, role_id) VALUES ('e3661c31-d1a4-47ab-94b6-1c6500dccf14', 2);
+INSERT INTO USER_ROLE (user_id, role_id) VALUES ('e3661c31-d1a4-47ab-94b6-1c6500dccf13', 2);
+INSERT INTO USER_ROLE (user_id, role_id) VALUES ('e3661c31-d1a4-47ab-94b6-1c6500dccf12', 2);
+INSERT INTO USER_ROLE (user_id, role_id) VALUES ('e3661c31-d1a4-47ab-94b6-1c6500dccf11', 2);
+INSERT INTO USER_ROLE (user_id, role_id) VALUES ('e3661c31-d1a4-47ab-94b6-1c6500dccf10', 2);
+INSERT INTO USER_ROLE (user_id, role_id) VALUES ('e3661c31-d1a4-47ab-94b6-1c6500dccf09', 2);
+INSERT INTO USER_ROLE (user_id, role_id) VALUES ('e3661c31-d1a4-47ab-94b6-1c6500dccf08', 2);
+INSERT INTO USER_ROLE (user_id, role_id) VALUES ('e3661c31-d1a4-47ab-94b6-1c6500dccf07', 2);
+INSERT INTO USER_ROLE (user_id, role_id) VALUES ('e3661c31-d1a4-47ab-94b6-1c6500dccf06', 2);
 
 -- Insert Directors
 INSERT INTO director (id, name, surname) VALUES
