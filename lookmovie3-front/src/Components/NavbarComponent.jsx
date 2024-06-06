@@ -52,6 +52,11 @@ const NavbarComponent = ({ loggedUser }) => {
                   For You
                 </Button>
               </Link>
+              <Link to="/profile" style={{ textDecoration: 'none', color: 'white' }}>
+                <Button color="inherit" sx={{ marginLeft: "10px" }}>
+                  Profile
+                </Button>
+              </Link>
             </>
           )}
 

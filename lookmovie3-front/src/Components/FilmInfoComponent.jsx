@@ -138,6 +138,9 @@ const FilmInfoComponent = ({ film ,close }) => {
             <Typography variant="body2">
               <strong>Director:</strong> {film.director.name + " " + film.director.surname}
             </Typography>
+            <Typography variant="body2">
+              <strong>Genre:</strong> {film.genre}
+            </Typography>
           </Box>
         </Grid>
         <Grid item xs={12}>
