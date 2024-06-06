@@ -43,7 +43,7 @@ public class Film {
     @Column(nullable = false)
     private String description;
 
-    @Column(nullable = true , length = 20000)
+    @Column(nullable = true , length = 100000)
     private String image;
 
     @Column(nullable = false)
